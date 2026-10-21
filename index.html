@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>التاج – حاسبات وكيبوردات وموسات</title>
-<meta name="description" content="متجر التاج: حاسبات ولابتوبات وكيبوردات وموسات أصلية مع توصيل لكل المحافظات.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+<title>متجر الريحان – حاسبات وكيبوردات وموسات</title>
+<meta name="description" content="متجر الريحان: حاسبات ولابتوبات وكيبوردات وموسات أصلية مع توصيل لكل المحافظات.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap">
 <style>
@@ -126,7 +126,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 <div class="glow"></div>
 <header>
   <button class="tg" id="mbtn" aria-label="القائمة">☰</button>
-  <div class="logo">👑 التاج</div>
+  <div class="logo">🌿 متجر الريحان</div>
   <div class="search">
     <input id="q" type="search" placeholder="ابحث عن حاسبة، كيبورد، موس…" aria-label="بحث">
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
@@ -199,7 +199,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 </aside>
 <div class="modal" id="mdl" hidden><div class="box" id="mbox"></div></div>
 <div class="toast" id="toast" role="status"></div>
-<footer>© التاج. جميع الأسعار بالدينار العراقي.</footer>
+<footer>© متجر الريحان. جميع الأسعار بالدينار العراقي.</footer>
 
 <script>
 // إعدادات Firebase (تخلي التعديلات تظهر للزبائن مباشرة). الصق هنا الـ firebaseConfig من لوحة Firebase، أو خليها null لو ما تريد.
@@ -297,7 +297,7 @@ function drawer(on){if(!on)$("menu").classList.remove("open");
 }
 function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove("on"),1400); }
 function buildMsg(t){
-  let m="🛒 *طلب جديد من المتجر*\n\n👤 *معلومات المشتري:*\n";
+  let m="🛒 *طلب جديد من متجر الريحان*\n\n👤 *معلومات المشتري:*\n";
   m+=`- *الاسم:* ${$("name").value.trim()}\n- *المحافظة:* ${$("prov").value}\n- *المنطقة/العنوان:* ${$("addr").value.trim()}\n- *رقم الهاتف:* ${$("phone").value.trim()}\n\n🖥️ *المنتجات المطلوبة:*\n`;
   Object.keys(cart).forEach((id,i)=>{const x=P.find(p=>p.id==id),q=cart[id];m+=`${i+1}. *${x.n}*\n   - الكمية: ${q}\n   - السعر: ${fmt(x.p*q)}\n`;});
   return m+`\n💰 *مجموع أسعار المنتجات:* ${fmt(t.sub)}\n🚚 *سعر التوصيل:* ${fmt(t.del)}\n📦 *المجموع الكلي مع التوصيل:* ${fmt(t.total)}\n\nيرجى تأكيد الطلب والمباشرة بالتوصيل.`;
@@ -364,8 +364,8 @@ function adminView(){
   <h4>إضافة منتج</h4><label for="nn">الاسم</label><input id="nn"><div class="two"><div><label for="nc">القسم</label><input id="nc" list="cl" placeholder="حاسبات"><datalist id="cl">${[...new Set(P.map(x=>x.c))].map(c=>`<option>${c}</option>`).join("")}</datalist></div><div><label for="np">السعر</label><input id="np" type="number"></div></div><div class="two"><div><label for="no">السعر القديم (اختياري)</label><input id="no" type="number"></div><div><label for="nb">شارة (اختياري)</label><input id="nb" placeholder="جديد / خصم"></div></div><label for="ni">صورة المنتج</label><input id="ni" type="file" accept="image/*">
   <p class="err" id="aerr" role="alert"></p>
   <div class="btns"><button class="big next" id="aadd">➕ إضافة المنتج</button><button class="big sec" id="aset">💾 حفظ الإعدادات</button></div>
-  <div class="btns">${db?`<button class="big sec" id="aseed">☁️ نشر الآن للجميع</button>`:""}<button class="big sec" id="aexp">📋 نسخ بيانات المتجر للنشر</button><button class="big sec" id="areset">♻️ تصفير التعديلات</button></div>
-  <p style="color:var(--muted);font-size:.85rem;margin-top:10px">${db?`✅ متصل بقاعدة البيانات: أي تعديل ينتشر للزبائن مباشرة.`:`ملاحظة: التعديلات تنحفظ بهذا المتصفح بس. حتى يشوفها الزبائن، اضغط "نسخ بيانات المتجر" والصقها بالكود مكان قائمة المنتجات ثم ارفع الملف من جديد.`}</p>`);
+  <div class="btns">${db?`<button class="big sec" id="aseed">☁️ نشر الآن للجميع</button>`:""}<button class="big sec" id="aexp">⬇️ تحميل ملف البيانات للنشر</button><button class="big sec" id="areset">♻️ تصفير التعديلات</button></div>
+  <p style="color:var(--muted);font-size:.85rem;margin-top:10px">${db?`✅ متصل بقاعدة البيانات: أي تعديل ينتشر للزبائن مباشرة.`:`ملاحظة: التعديلات تنحفظ بمتصفحك. بعد ما تخلص اضغط "تحميل ملف البيانات"، وارفع الملف store-data.json على GitHub بنفس مكان index.html واستبدل القديم، وتظهر للزبائن.`}</p>`);
 }
 const readImg=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);r(c.toDataURL("image/jpeg",.7));};im.src=fr.result;};fr.readAsDataURL(f);});
 $("mbtn").onclick=()=>{$("menu").classList.add("open");$("shade").classList.add("on");$("menu").setAttribute("aria-hidden","false");};
@@ -394,7 +394,7 @@ $("mdl").addEventListener("click",async e=>{
     P.push(x);save();refresh();adminView();toast("تمت إضافة المنتج ✓");
   }
   if(t.id==="aseed")save();
-  if(t.id==="aexp"){const txt="const P = "+JSON.stringify(P,null,1)+";\nlet DELIVERY = "+DELIVERY+";\nlet WHATSAPP = \""+WHATSAPP+"\";";try{await navigator.clipboard.writeText(txt);toast("تم النسخ ✓");}catch(err){$("aerr").textContent="المتصفح منع النسخ.";}}
+  if(t.id==="aexp"){const bl=new Blob([JSON.stringify({P,DELIVERY,WHATSAPP})],{type:"application/json"}),l=document.createElement("a");l.href=URL.createObjectURL(bl);l.download="store-data.json";l.click();toast("نزل الملف store-data.json: ارفعه على GitHub");}
   if(t.id==="areset"&&confirm("ترجع المتجر للبيانات الأصلية؟")){try{localStorage.removeItem("taj_data");}catch(e){}location.reload();}
 });
 $("mdl").addEventListener("change",e=>{
@@ -405,6 +405,7 @@ $("mdl").addEventListener("change",e=>{
   save();refresh();
 });
 setSup();
+if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;refresh();}).catch(()=>{});}
 renderChips();renderGrid();renderCart();
 </script>
 </body>
