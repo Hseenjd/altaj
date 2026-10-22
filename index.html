@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>متجر الريحان – حاسبات وكيبوردات وموسات</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f6b4f">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="الريحان">
 <meta name="description" content="متجر الريحان: حاسبات ولابتوبات وكيبوردات وموسات أصلية مع توصيل لكل المحافظات.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -222,6 +228,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
   <div class="dh"><span>القائمة الرئيسية</span><button class="x" id="mclose" aria-label="إغلاق">✕</button></div>
   <div class="body">
     <button class="mi" id="tg">🌙 <span id="tgt">الوضع الليلي</span></button>
+    <button class="mi" id="inst" hidden>📲 تثبيت التطبيق</button>
     <button class="mi" id="devbtn">🛠️ دخول المطورين</button>
     <button class="mi" id="exit" hidden>🚪 تسجيل خروج المطور</button>
     <p class="mh">🎧 الدعم الفني</p>
@@ -482,6 +489,18 @@ $("mdl").addEventListener("click",e=>{const t=e.target;
 $("cpnb").onclick=()=>{const c=$("cpn").value.trim().toLowerCase(),k=Object.keys(COUPONS).find(q=>q.toLowerCase()===c);coupon=k||"";toast(k?"تم تطبيق خصم "+COUPONS[k]+"% ✓":"كود الخصم غير صحيح");renderCart();};
 const stats=()=>{$("sN").textContent=P.length;$("sC").textContent=cats.length-1;$("sD").textContent=DELIVERY.toLocaleString("en-US");$("fcats").innerHTML=cats.slice(1).map(c=>`<button class="fl" data-c="${c}">${c}</button>`).join("");};
 $("hv").innerHTML=`<div class="fc a">${ICON.laptop}</div><div class="fc b">${ICON.kbrgb}</div><div class="fc c">${ICON.mouseg}</div><div class="fc d">${ICON.pc}</div>`;
+// ===== تطبيق (PWA) =====
+if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+let ip=null;
+const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+if(!standalone)$("inst").hidden=false;
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();ip=e;});
+addEventListener("appinstalled",()=>{$("inst").hidden=true;});
+$("inst").onclick=async()=>{
+  if(ip){ip.prompt();await ip.userChoice;ip=null;return;}
+  drawer(false);
+  modal(head("📲 تثبيت التطبيق")+`<p><b>آيفون (Safari):</b> اضغط زر المشاركة ⬆️ ثم <b>إضافة إلى الشاشة الرئيسية</b>.</p><p><b>أندرويد (Chrome):</b> اضغط ⋮ ثم <b>تثبيت التطبيق</b> أو <b>إضافة إلى الشاشة الرئيسية</b>.</p><p style="color:var(--muted)">بعدها يظهر الريحان كتطبيق بأيقونته على شاشتك ويفتح بدون شريط المتصفح.</p>`);
+};
 setSup();stats();
 if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;refresh();}).catch(()=>{});}
 renderChips();renderGrid();renderCart();
