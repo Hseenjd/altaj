@@ -252,7 +252,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 <script>
 // إعدادات Firebase (تخلي التعديلات تظهر للزبائن مباشرة). الصق هنا الـ firebaseConfig من لوحة Firebase، أو خليها null لو ما تريد.
 // مثال: const FB = {apiKey:"...",authDomain:"...",projectId:"...",appId:"..."};
-const FB = window.FB_CONFIG||null;
+const FB = window.FB_CONFIG||(typeof firebaseConfig!=="undefined"?firebaseConfig:null);
 let COUPONS={};   // كود الخصم: النسبة المئوية
 const FREE_FROM=1000000;                    // توصيل مجاني للطلب من هذا المبلغ
 let coupon="";
@@ -306,14 +306,14 @@ const oos=x=>x.out||x.st===0;
 const avg=x=>{const r=x.rv||[];return r.length?(r.reduce((a,b)=>a+b.s,0)/r.length).toFixed(1):""};
 const fmt = n => n.toLocaleString("en-US") + " د.ع";
 const $ = id => document.getElementById(id);
-const norm = s => s.toLowerCase().replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه");
+const norm=s=>String(s).toLowerCase().replace(/[\u064B-\u0652]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/كيبل|كابل|cables?|cabel/g,"كبل").replace(/ماوس|mouse|mice/g,"موس").replace(/keyboards?|كيبوارد|كيبورد/g,"كيبورد").replace(/laptops?/g,"لابتوب").replace(/\bpc\b|كمبيوتر|حاسوب/g,"حاسبه");
 
 $("prov").innerHTML = PROVS.map(x=>`<option>${x}</option>`).join("");
 
 function renderChips(){ $("chips").innerHTML = cats.concat(favs.length?["المفضلة"]:[]).map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${c}">${c==="المفضلة"?"❤️ المفضلة ("+favs.length+")":c}</button>`).join(""); }
 function renderGrid(){
   const q = norm($("q").value.trim()), s = $("sort").value;
-  let list = P.filter(x=>(cat==="الكل"||(cat==="المفضلة"?favs.includes(x.id):x.c===cat)) && (!q || norm(x.n+" "+x.c).includes(q)));
+  let list = P.filter(x=>(cat==="الكل"||(cat==="المفضلة"?favs.includes(x.id):x.c===cat)) && (!q || norm(x.n+" "+x.c+" "+(x.d||"")).includes(q)));
   if(s==="1") list.sort((a,b)=>a.p-b.p); if(s==="2") list.sort((a,b)=>b.p-a.p);
   $("grid").innerHTML = list.length ? list.map((x,i)=>`
   <article class="card" style="animation-delay:${Math.min(i,12)*40}ms">${x.b||x.hot?`<span class="badge">${x.b||"🔥 رائج"}</span>`:""}

@@ -83,7 +83,7 @@ h2{font-size:1.1rem;margin:18px 0 8px}
 <div class="toast" id="toast" role="status"></div>
 
 <script>
-const FB=window.FB_CONFIG||null;
+const FB = window.FB_CONFIG||(typeof firebaseConfig!=="undefined"?firebaseConfig:null);
 // حساب الدخول المحلي (بدون Firebase): الاسم admin والرمز Taj@2026 — غيّر الهاش أدناه برمزك (SHA-256)
 const DEVS={"admin":"dab082106e572642363ba96f6b2e59a4ea465a4b146c735a9d7e0bc909b17e1e"};
 const $=id=>document.getElementById(id);
