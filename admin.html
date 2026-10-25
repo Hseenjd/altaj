@@ -90,6 +90,21 @@ const $=id=>document.getElementById(id);
 const fmt=n=>(+n||0).toLocaleString("en-US")+" د.ع";
 const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>String(s).toLowerCase().replace(/[\u064B-\u0652]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/كيبل|كابل|cables?|cabel/g,"كبل").replace(/ماوس|mouse|mice/g,"موس").replace(/keyboards?|كيبوارد|كيبورد/g,"كيبورد").replace(/laptops?/g,"لابتوب").replace(/\bpc\b|كمبيوتر|حاسوب/g,"حاسبه");
+function fbMsg(e){
+  const c=(e&&e.code)||"",m={
+    "auth/invalid-api-key":"مفتاح Firebase (apiKey) غلط بملف config.js. انسخه من Firebase بالنسخ واللصق.",
+    "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"مفتاح Firebase (apiKey) غلط بملف config.js. انسخه من Firebase بالنسخ واللصق.",
+    "auth/unauthorized-domain":"النطاق غير مسموح. أضف hseenjd.github.io بـ Authentication ← Settings ← Authorized domains.",
+    "auth/operation-not-allowed":"لازم تفعّل Email/Password من Authentication ← Sign-in method.",
+    "auth/user-not-found":"هذا الإيميل غير مسجّل. أضفه من Authentication ← Users ← Add user.",
+    "auth/wrong-password":"كلمة المرور غلط.",
+    "auth/invalid-credential":"الإيميل أو كلمة المرور غلط، أو المستخدم غير مضاف بتبويب Users بـ Firebase.",
+    "auth/invalid-email":"صيغة الإيميل غير صحيحة.",
+    "auth/network-request-failed":"ما كو اتصال بالإنترنت أو Firebase محجوب.",
+    "auth/too-many-requests":"محاولات كثيرة. انتظر شوي وجرّب مرة ثانية.",
+    "auth/user-disabled":"هذا الحساب معطّل بـ Firebase."};
+  return (m[c]||"تعذّر الدخول.")+(c?" ("+c+")":"");
+}
 const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,"0")).join("");
 const ST={pending:"قيد الانتظار",prep:"قيد التجهيز",ship:"تم الشحن",done:"تم التوصيل",cancel:"ملغي"};
 const TABS=[["dash","📊 اللوحة"],["orders","🧾 الطلبات"],["prod","📦 المنتجات"],["mkt","🎟️ الأكواد والتعليقات"],["set","⚙️ الإعدادات"]];
@@ -245,9 +260,9 @@ async function doLogin(){
   const dig=x=>x.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),u=dig($("lu").value.trim()),p=dig($("lp").value.trim());
   if(!auth&&!(window.crypto&&crypto.subtle)){$("lerr").textContent="المتصفح ما يدعم التشفير هنا. افتح الصفحة من رابط https.";return;}
   try{
-    if(auth)await auth.signInWithEmailAndPassword(u,p);
+    if(auth)await auth.signInWithEmailAndPassword(u,$("lp").value);
     else{const h=await sha(p);if(!(DEVS[u.toLowerCase()]&&DEVS[u.toLowerCase()]===h))throw 0;try{localStorage.setItem("taj_adm","1");}catch(e){}enter();}
-  }catch(e){$("lerr").textContent=auth?"البريد أو كلمة المرور غير صحيحة.":"الاسم أو كلمة المرور غير صحيحة. تأكد أن لوحة المفاتيح إنجليزية والأحرف صحيحة.";}
+  }catch(e){$("lerr").textContent=auth?fbMsg(e):"الاسم أو كلمة المرور غير صحيحة. تأكد أن لوحة المفاتيح إنجليزية والأحرف صحيحة.";}
 }
 function doLogout(){
   if(auth)auth.signOut();try{localStorage.removeItem("taj_adm");}catch(e){}
