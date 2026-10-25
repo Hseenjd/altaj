@@ -1,6 +1,6 @@
 // غيّر رقم النسخة كل ما تحدّث الملفات حتى يتحدّث التطبيق عند الزبائن
-const V="raihan-v1",SHELL=["./","index.html","manifest.json","icon-192.png","icon-512.png"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()));});
+const V="raihan-v2",SHELL=["./","index.html","admin.html","config.js","manifest.json","icon-192.png","icon-512.png"];
+self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>Promise.allSettled(SHELL.map(u=>c.add(u)))).then(()=>self.skipWaiting()));});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!==V).map(n=>caches.delete(n)))).then(()=>self.clients.claim()));});
 // الشبكة أولاً (حتى تظهر التعديلات الجديدة)، وإذا ما كو إنترنت يفتح من الذاكرة
 self.addEventListener("fetch",e=>{

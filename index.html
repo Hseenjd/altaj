@@ -55,7 +55,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:va
 .mh{color:var(--muted);margin-top:26px;font-weight:600}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:70;display:grid;place-items:center;padding:16px;overflow:auto}
 .modal[hidden]{display:none}
-.box{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(580px,100%);max-height:92vh;overflow:auto}
+.box{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(680px,100%);max-height:92vh;overflow:auto}
 .box input,.box select{width:100%;margin-top:4px;padding:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
 .box h4{margin:18px 0 4px;color:var(--gold2)}
 .arow{display:grid;grid-template-columns:1fr 110px auto auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
@@ -94,6 +94,14 @@ footer.ft{background:var(--s1);border-top:1px solid var(--line);padding:32px 20p
 .qprice{font-size:1.3rem;margin:6px 0}.qprice b{color:var(--gold2)}.qprice s{color:var(--muted);font-size:.9rem}
 [data-qv]{cursor:pointer}
 .card{animation:up .5s both}@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.tab{background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:5px 14px;white-space:nowrap}
+.tab.on{background:var(--gold);color:#1a1200;font-weight:800;border-color:var(--gold)}
+.nb{background:#e11d48;color:#fff;border-radius:999px;padding:0 7px;font-size:.75rem}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{background:var(--s2);border:1px solid var(--line);border-radius:14px;padding:12px}.st b{display:block;font-size:1.3rem;color:var(--gold2)}.st small{color:var(--muted)}
+.ord{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-top:8px}.ord summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.ord p{margin:6px 0}
+.tg.has{position:relative}.tg.has::after{content:"";position:absolute;top:3px;right:3px;width:10px;height:10px;border-radius:50%;background:#e11d48}
 .soc{display:flex;gap:6px;margin-top:6px}
 .soc button{background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:.8rem}
 .rvc{border-bottom:1px solid var(--line);padding:8px 0}.rvc p{margin:2px 0;color:var(--muted)}
@@ -157,6 +165,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 @media (max-width:600px){.topbar{font-size:.72rem}header{padding:8px 12px;gap:8px}.logo{font-size:1.2rem;margin-inline-end:auto}.cartbtn{padding:6px 12px;font-size:.9rem}header{flex-wrap:wrap}.search{order:3;flex-basis:100%;max-width:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<script src="config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -215,7 +224,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
       <label for="prov">المحافظة</label><select id="prov"></select>
       <label for="addr">المنطقة / العنوان</label><input id="addr" autocomplete="street-address">
       <label for="phone">رقم الهاتف</label><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="07xxxxxxxxx">
-      <p class="err" id="err" role="alert"></p>
+      <label for="note">ملاحظات إضافية (اختياري)</label><input id="note" placeholder="أي ملاحظات تريد إضافتها…"><p class="err" id="err" role="alert"></p>
     </div>
     <div class="foot">
       <div class="sum t"><span>المجموع الكلي</span><span id="total2"></span></div>
@@ -229,7 +238,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
   <div class="body">
     <button class="mi" id="tg">🌙 <span id="tgt">الوضع الليلي</span></button>
     <button class="mi" id="inst" hidden>📲 تثبيت التطبيق</button>
-    <button class="mi" id="devbtn">🛠️ دخول المطورين</button>
+    <button class="mi" id="devbtn" hidden>🛠️ دخول المطورين</button>
     <button class="mi" id="exit" hidden>🚪 تسجيل خروج المطور</button>
     <p class="mh">🎧 الدعم الفني</p>
     <a class="mi" id="wasup" href="#" target="_blank" rel="noopener" style="color:#1a9b4b">💬 حساب الواتساب</a>
@@ -243,8 +252,8 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 <script>
 // إعدادات Firebase (تخلي التعديلات تظهر للزبائن مباشرة). الصق هنا الـ firebaseConfig من لوحة Firebase، أو خليها null لو ما تريد.
 // مثال: const FB = {apiKey:"...",authDomain:"...",projectId:"...",appId:"..."};
-const FB = null;
-const COUPONS={"ريحان10":10,"RAIHAN10":10};   // كود الخصم: النسبة المئوية
+const FB = window.FB_CONFIG||null;
+let COUPONS={};   // كود الخصم: النسبة المئوية
 const FREE_FROM=1000000;                    // توصيل مجاني للطلب من هذا المبلغ
 let coupon="";
 let WHATSAPP = "9647771928004";   // رقم المتجر
@@ -287,12 +296,13 @@ ICON.kbw=kbd("#e8f0ea",()=>"#ffffff","#b7cfc3",'<circle cx="176" cy="44" r="3" f
 ICON.mouse=mse("",'<path d="M100 22c0-14 8-18 14-22" stroke="#6b8a7c" stroke-width="3" fill="none"/>');
 ICON.mousew=mse('<rect x="150" y="112" width="24" height="10" rx="2" fill="#6b8a7c"/><rect x="172" y="114" width="8" height="6" rx="1" fill="#f5c542"/>');
 ICON.mouseg=mse('<rect x="52" y="76" width="9" height="14" rx="3" fill="#f5c542"/><rect x="52" y="94" width="9" height="14" rx="3" fill="#f5c542"/><path d="M62 118c10 18 66 18 76 0" stroke="#ff4d9d" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M60 80c-4 14-4 28 0 40" stroke="#4dd2ff" stroke-width="4" fill="none" stroke-linecap="round"/>');
-if(!FB)try{const d=JSON.parse(localStorage.getItem("taj_data")||"null");if(d&&d.P){P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;}}catch(e){}
+if(!FB)try{const d=JSON.parse(localStorage.getItem("taj_data")||"null");if(d&&d.P){P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;}}catch(e){}
 const ORDER=["حاسبات","كيبوردات","كيبوردات ألعاب","موسات"];
 const oi=c=>{const i=ORDER.indexOf(c);return i<0?99:i};const sortP=()=>P.sort((a,b)=>oi(a.c)-oi(b.c)||a.id-b.id);sortP();
 let cats = ["الكل", ...new Set(P.map(x=>x.c))];
 let cat = "الكل", cart = {}, favs = [];
 try{favs=JSON.parse(localStorage.getItem("taj_fav")||"[]");}catch(e){}
+const oos=x=>x.out||x.st===0;
 const avg=x=>{const r=x.rv||[];return r.length?(r.reduce((a,b)=>a+b.s,0)/r.length).toFixed(1):""};
 const fmt = n => n.toLocaleString("en-US") + " د.ع";
 const $ = id => document.getElementById(id);
@@ -306,14 +316,14 @@ function renderGrid(){
   let list = P.filter(x=>(cat==="الكل"||(cat==="المفضلة"?favs.includes(x.id):x.c===cat)) && (!q || norm(x.n+" "+x.c).includes(q)));
   if(s==="1") list.sort((a,b)=>a.p-b.p); if(s==="2") list.sort((a,b)=>b.p-a.p);
   $("grid").innerHTML = list.length ? list.map((x,i)=>`
-  <article class="card" style="animation-delay:${Math.min(i,12)*40}ms">${x.b?`<span class="badge">${x.b}</span>`:""}
+  <article class="card" style="animation-delay:${Math.min(i,12)*40}ms">${x.b||x.hot?`<span class="badge">${x.b||"🔥 رائج"}</span>`:""}
   <div class="pic" data-qv="${x.id}">${ICON[x.e]}<img src="${x.img||"images/"+x.id+".jpg"}" alt="${x.n}" loading="lazy"${(x.img||"").startsWith("http")?' style="object-fit:cover;padding:0"':""} onerror="this.remove()"></div>
-  <div class="info"><h3 data-qv="${x.id}">${x.n}</h3><small>${x.c}</small>
+  <div class="info"><h3 data-qv="${x.id}">${x.n}</h3><small>${x.c}</small>${x.st>0&&x.st<=5?`<small style="color:#d6336c">باقي ${x.st} فقط</small>`:""}
   <div class="soc"><button data-fav="${x.id}" aria-label="مفضلة">${favs.includes(x.id)?"❤️":"🤍"}</button><button data-rv="${x.id}">💬 ${(x.rv||[]).length?`⭐${avg(x)} (${x.rv.length})`:"علّق"}</button></div>
-  <div class="row"><span class="price">${x.o?`<s>${fmt(x.o)}</s>`:""}${fmt(x.p)}</span>${x.out?'<button class="add" disabled style="opacity:.4">نفد</button>':`<button class="add" data-id="${x.id}">أضف</button>`}</div></div></article>`).join("")
+  <div class="row"><span class="price">${x.o?`<s>${fmt(x.o)}</s>`:""}${fmt(x.p)}</span>${oos(x)?'<button class="add" disabled style="opacity:.4">نفد</button>':`<button class="add" data-id="${x.id}">أضف</button>`}</div></div></article>`).join("")
   : '<p class="none">ما لقينا نتائج. جرّب كلمة ثانية.</p>';
 }
-function totals(){let sub=0,count=0;Object.keys(cart).forEach(id=>{const x=P.find(p=>p.id==id);if(!x||x.out){delete cart[id];return;}sub+=x.p*cart[id];count+=cart[id];});const pct=COUPONS[coupon]||0,disc=Math.round(sub*pct/100),del=count&&sub-disc<FREE_FROM?DELIVERY:0;return {sub,disc,del,count,total:sub-disc+del};}
+function totals(){let sub=0,count=0;Object.keys(cart).forEach(id=>{const x=P.find(p=>p.id==id);if(!x||oos(x)){delete cart[id];return;}sub+=x.p*cart[id];count+=cart[id];});const pct=COUPONS[coupon]||0,disc=Math.round(sub*pct/100),del=count&&sub-disc<FREE_FROM?DELIVERY:0;return {sub,disc,del,count,total:sub-disc+del};}
 function renderCart(){
   const t = totals();
   $("items").innerHTML = t.count ? Object.keys(cart).map(id=>{
@@ -337,8 +347,8 @@ function drawer(on){if(!on)$("menu").classList.remove("open");
 }
 function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove("on"),1400); }
 function buildMsg(t){
-  let m="🛒 *طلب جديد من متجر الريحان*\n\n👤 *معلومات المشتري:*\n";
-  m+=`- *الاسم:* ${$("name").value.trim()}\n- *المحافظة:* ${$("prov").value}\n- *المنطقة/العنوان:* ${$("addr").value.trim()}\n- *رقم الهاتف:* ${$("phone").value.trim()}\n\n🖥️ *المنتجات المطلوبة:*\n`;
+  let m="🛒 *طلب جديد من متجر الريحان*\n🧾 *رقم الطلب:* "+curOid+"\n\n👤 *معلومات المشتري:*\n";
+  m+=`- *الاسم:* ${$("name").value.trim()}\n- *المحافظة:* ${$("prov").value}\n- *المنطقة/العنوان:* ${$("addr").value.trim()}\n- *رقم الهاتف:* ${$("phone").value.trim()}\n${$("note").value.trim()?`- *ملاحظات:* ${$("note").value.trim()}\n`:""}\n🖥️ *المنتجات المطلوبة:*\n`;
   Object.keys(cart).forEach((id,i)=>{const x=P.find(p=>p.id==id),q=cart[id];m+=`${i+1}. *${x.n}*\n   - الكمية: ${q}\n   - السعر: ${fmt(x.p*q)}\n`;});
   return m+`\n💰 *مجموع أسعار المنتجات:* ${fmt(t.sub)}${t.disc?`\n🎟️ *خصم (${coupon}):* -${fmt(t.disc)}`:""}\n🚚 *سعر التوصيل:* ${fmt(t.del)}\n📦 *المجموع الكلي مع التوصيل:* ${fmt(t.total)}\n\nيرجى تأكيد الطلب والمباشرة بالتوصيل.`;
 }
@@ -382,8 +392,10 @@ $("order").onclick=e=>{
   else if(!/^[0-9٠-٩]{10,11}$/.test(ph))err="اكتب رقم هاتف صحيح (10 أو 11 رقم).";
   $("err").textContent=err;
   if(err){e.preventDefault();return;}
+  curOid="R"+Date.now().toString(36).slice(-5).toUpperCase();
+  addOrder({id:curOid,t:Date.now(),name:$("name").value.trim(),phone:ph.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),prov:$("prov").value,addr:$("addr").value.trim(),note:$("note").value.trim(),items:Object.keys(cart).map(id=>{const x=P.find(p=>p.id==id);return {id:x.id,n:x.n,q:cart[id],p:x.p};}),sub:t.sub,disc:t.disc,coupon,del:t.del,total:t.total,status:"pending"});
   $("order").href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildMsg(t))}`;
-  setTimeout(()=>{cart={};coupon="";$("cpn").value="";renderCart();view("cart");drawer(false);toast("تم تجهيز طلبك، أكمل الإرسال من واتساب ✓");},700);
+  setTimeout(()=>{cart={};coupon="";$("cpn").value="";$("note").value="";renderCart();view("cart");drawer(false);toast("تم تجهيز طلبك، أكمل الإرسال من واتساب ✓");},700);
 };
 
 // ===== المطورين =====
@@ -394,62 +406,117 @@ const setSup=()=>{["wasup","hwa","fwa","fab"].forEach(i=>$(i).href="https://wa.m
 let db=null,auth=null;
 const save=()=>{
   if(db){if(!admin){toast("سجّل دخول المطور أولاً");return;}
-    db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP}).then(()=>toast("تم النشر للجميع ✓")).catch(()=>toast("فشل النشر: تأكد من الصلاحيات وقواعد Firestore"));return;}
-  try{localStorage.setItem("taj_data",JSON.stringify({P,DELIVERY,WHATSAPP}));}catch(e){toast("ما انحفظ: الذاكرة ممتلئة");}
+    db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP,COUPONS}).then(()=>toast("تم النشر للجميع ✓")).catch(()=>toast("فشل النشر: تأكد من الصلاحيات وقواعد Firestore"));return;}
+  try{localStorage.setItem("taj_data",JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}));}catch(e){toast("ما انحفظ: الذاكرة ممتلئة");}
 };
-function refresh(){sortP();cats=["الكل",...new Set(P.map(x=>x.c))];if(!cats.includes(cat)&&cat!=="المفضلة")cat="الكل";renderChips();renderGrid();renderCart();setSup();stats();}
+function refresh(){sortP();cats=["الكل",...new Set(P.map(x=>x.c))];if(!cats.includes(cat)&&cat!=="المفضلة")cat="الكل";renderChips();renderGrid();renderCart();setSup();stats();deep();}
 const modal=h=>{$("mbox").innerHTML=h;$("mdl").hidden=false;};
 const head=t=>`<div class="dh" style="padding:0 0 10px"><span>${t}</span><button class="x" data-close aria-label="إغلاق">✕</button></div>`;
 function loginView(){drawer(false);modal(head("🛡️ دخول المطورين")+`<label for="dn">${auth?"البريد الإلكتروني":"اسم المطور"}</label><input id="dn" placeholder="${auth?"you@example.com":"مثال: admin"}" autocomplete="username"><label for="dp">رمز الدخول</label><input id="dp" type="password" placeholder="أدخل الرمز الخاص بك" autocomplete="current-password"><p class="err" id="derr" role="alert"></p><div class="btns"><button class="big next" id="dgo">🔑 دخول</button><button class="big sec" data-close>إلغاء</button></div>`);}
-function adminView(){
-  const rows=P.map(x=>`<div class="arow"><span>${x.n}</span><input type="number" min="0" step="500" data-pr="${x.id}" value="${x.p}" aria-label="سعر ${x.n}"><label class="ck"><input type="checkbox" data-out="${x.id}" ${x.out?"checked":""}>نفد</label><button class="del" data-del="${x.id}" aria-label="حذف">🗑️</button></div>`).join("");
-  modal(head("🛠️ لوحة التحكم")+`<h4>الإعدادات</h4><div class="two"><div><label for="sd">سعر التوصيل (د.ع)</label><input id="sd" type="number" value="${DELIVERY}"></div><div><label for="sw">رقم واتساب (دولي بدون +)</label><input id="sw" value="${WHATSAPP}" inputmode="numeric"></div></div>
-  <h4>المنتجات (${P.length}) – تعديل السعر أو الحالة ينحفظ مباشرة</h4>${rows}
-  <h4>💬 تعليقات الزبائن (انشر اللي توصلك على الواتساب)</h4><div class="two"><select id="rvp">${P.map(x=>`<option value="${x.id}">${x.n}</option>`).join("")}</select><input id="rvn" placeholder="اسم الزبون"></div><div class="two"><select id="rvs"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select><input id="rvt" placeholder="نص التعليق"></div><button class="big sec" id="rvadd" style="margin-top:8px">نشر التعليق</button>${P.flatMap(x=>(x.rv||[]).map((r,i)=>`<div class="arow" style="grid-template-columns:1fr auto"><span>${x.n}: ${esc(r.n)} (${r.s}⭐) ${esc(r.t)}</span><button class="del" data-rvdel="${x.id}:${i}" aria-label="حذف التعليق">🗑️</button></div>`)).join("")}
-  <h4>إضافة منتج</h4><label for="nn">الاسم</label><input id="nn"><label for="nd">الوصف (اختياري)</label><input id="nd"><div class="two"><div><label for="nc">القسم</label><input id="nc" list="cl" placeholder="حاسبات"><datalist id="cl">${[...new Set(P.map(x=>x.c))].map(c=>`<option>${c}</option>`).join("")}</datalist></div><div><label for="np">السعر</label><input id="np" type="number"></div></div><div class="two"><div><label for="no">السعر القديم (اختياري)</label><input id="no" type="number"></div><div><label for="nb">شارة (اختياري)</label><input id="nb" placeholder="جديد / خصم"></div></div><label for="ni">صورة المنتج</label><input id="ni" type="file" accept="image/*">
-  <p class="err" id="aerr" role="alert"></p>
-  <div class="btns"><button class="big next" id="aadd">➕ إضافة المنتج</button><button class="big sec" id="aset">💾 حفظ الإعدادات</button></div>
-  <div class="btns">${db?`<button class="big sec" id="aseed">☁️ نشر الآن للجميع</button>`:""}<button class="big sec" id="aexp">⬇️ تحميل ملف البيانات للنشر</button><button class="big sec" id="areset">♻️ تصفير التعديلات</button></div>
-  <p style="color:var(--muted);font-size:.85rem;margin-top:10px">${db?`✅ متصل بقاعدة البيانات: أي تعديل ينتشر للزبائن مباشرة.`:`ملاحظة: التعديلات تنحفظ بمتصفحك. بعد ما تخلص اضغط "تحميل ملف البيانات"، وارفع الملف store-data.json على GitHub بنفس مكان index.html واستبدل القديم، وتظهر للزبائن.`}</p>`);
+const ST={pending:"قيد الانتظار",prep:"قيد التجهيز",ship:"تم الشحن",done:"تم التوصيل",cancel:"ملغي"};
+const waNum=p=>{p=String(p).replace(/\D/g,"");return p.startsWith("0")?"964"+p.slice(1):p;};
+const ordersLocal=()=>{try{return JSON.parse(localStorage.getItem("taj_orders")||"[]");}catch(e){return [];}};
+const saveOrdersLocal=()=>{try{localStorage.setItem("taj_orders",JSON.stringify(orders));}catch(e){}};
+function badge(){const n=orders.filter(o=>o.status==="pending").length;$("devbtn").textContent=admin?"🛠️ لوحة التحكم"+(n?" ("+n+" جديد)":""):"🛠️ دخول المطورين";$("mbtn").classList.toggle("has",admin&&n>0);}
+function addOrder(o){
+  if(db){db.collection("orders").doc(o.id).set(o).catch(()=>{});return;}
+  if(admin){orders=ordersLocal();orders.unshift(o);saveOrdersLocal();badge();}
+}
+function loadOrders(){
+  if(db){
+    if(!admin||unsub)return;
+    unsub=db.collection("orders").orderBy("t","desc").onSnapshot(sn=>{
+      orders=sn.docs.map(d=>d.data());
+      if(ready&&sn.docChanges().some(c=>c.type==="added"))toast("🔔 وصلك طلب جديد");
+      ready=true;badge();if(!$("mdl").hidden&&(cur==="orders"||cur==="dash")&&$("mbox").querySelector(".tabs"))adminView();
+    },()=>{});
+  }else{orders=ordersLocal();badge();}
+}
+function setStatus(id,st){const o=orders.find(x=>x.id===id);if(!o)return;o.status=st;if(db)db.collection("orders").doc(id).update({status:st}).catch(()=>toast("فشل التحديث"));else saveOrdersLocal();badge();}
+function delOrder(id){orders=orders.filter(x=>x.id!==id);if(db)db.collection("orders").doc(id).delete().catch(()=>toast("فشل الحذف"));else saveOrdersLocal();badge();}
+function adminView(tab){
+  if(tab)cur=tab;
+  const np=orders.filter(o=>o.status==="pending").length;
+  const tabs=`<div class="tabs">${[["dash","📊 اللوحة"],["orders","🧾 الطلبات"],["prod","📦 المنتجات"],["links","🔗 الروابط"],["more","⚙️ الإعدادات"]].map(([k,l])=>`<button class="tab${k===cur?" on":""}" data-tab="${k}">${l}${k==="orders"&&np?` <span class="nb">${np}</span>`:""}</button>`).join("")}</div>`;
+  const aerr='<p class="err" id="aerr" role="alert"></p>';
+  let body="";
+  if(cur==="dash"){
+    const rev=orders.filter(o=>o.status!=="cancel").reduce((a,o)=>a+o.total,0);
+    body=`<div class="stats"><div class="st"><b>${orders.length}</b><small>إجمالي الطلبات</small></div><div class="st"><b>${np}</b><small>بانتظار المعالجة</small></div><div class="st"><b>${fmt(rev)}</b><small>إجمالي المبيعات</small></div><div class="st"><b>${P.length}</b><small>المنتجات</small></div><div class="st"><b>${P.filter(oos).length}</b><small>نفد من المخزون</small></div><div class="st"><b>${Object.keys(COUPONS).length}</b><small>أكواد الخصم</small></div></div>
+    <h4>آخر الطلبات</h4>${orders.slice(0,5).map(o=>`<div class="arow" style="grid-template-columns:1fr auto auto"><span>#${o.id} · ${esc(o.name)}</span><b>${fmt(o.total)}</b><span>${ST[o.status]}</span></div>`).join("")||'<p class="empty">ما كو طلبات للحين.</p>'}
+    ${db?"":'<p style="color:var(--muted);font-size:.85rem;margin-top:10px">⚠️ بدون Firebase تظهر هنا فقط الطلبات اللي تسويها انت من هذا الجهاز. لعرض طلبات كل الزبائن فعّل Firebase.</p>'}`;
+  }else if(cur==="orders"){
+    const list=orders.filter(o=>ofil==="all"||o.status===ofil);
+    body=`<select id="ofil"><option value="all">كل الحالات</option>${Object.keys(ST).map(k=>`<option value="${k}"${ofil===k?" selected":""}>${ST[k]}</option>`).join("")}</select>`+(list.map(o=>`<details class="ord"><summary><span>#${o.id} · ${esc(o.name)} · ${ST[o.status]}</span><b>${fmt(o.total)}</b></summary>
+    <p>${new Date(o.t).toLocaleString("ar-IQ")}</p><p>📞 ${esc(o.phone)} · 📍 ${esc(o.prov)}، ${esc(o.addr)}</p>${o.note?`<p>📝 ${esc(o.note)}</p>`:""}
+    <p>${o.items.map(i=>esc(i.n)+" × "+i.q).join("<br>")}</p><p>${o.disc?`خصم: -${fmt(o.disc)} · `:""}التوصيل: ${fmt(o.del)} · <b>المجموع: ${fmt(o.total)}</b></p>
+    <div class="btns"><select data-ost="${o.id}" aria-label="حالة الطلب">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="big sec" style="text-decoration:none;flex:0 0 auto;padding:8px 14px" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}">💬 واتساب الزبون</a><button class="del" data-odel="${o.id}" aria-label="حذف الطلب">🗑️</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');
+  }else if(cur==="prod"){
+    const rows=P.map(x=>`<div class="arow" style="grid-template-columns:1fr 88px 62px auto auto auto"><span>${esc(x.n)}</span><input type="number" min="0" step="500" data-pr="${x.id}" value="${x.p}" aria-label="سعر ${esc(x.n)}"><input type="number" min="0" data-stk="${x.id}" value="${x.st??""}" placeholder="مخزون" aria-label="المخزون"><label class="ck"><input type="checkbox" data-out="${x.id}" ${x.out?"checked":""}>نفد</label><label class="ck"><input type="checkbox" data-hot="${x.id}" ${x.hot?"checked":""}>🔥</label><button class="del" data-del="${x.id}" aria-label="حذف">🗑️</button></div>`).join("");
+    body=`<h4>المنتجات (${P.length}) – السعر والمخزون و"نفد" و🔥رائج تنحفظ مباشرة</h4>${rows}
+    <h4>إضافة منتج</h4><label for="nn">الاسم</label><input id="nn"><label for="nd">الوصف (اختياري)</label><input id="nd"><div class="two"><div><label for="nc">القسم</label><input id="nc" list="cl" placeholder="حاسبات"><datalist id="cl">${[...new Set(P.map(x=>x.c))].map(c=>`<option>${c}</option>`).join("")}</datalist></div><div><label for="np">السعر</label><input id="np" type="number"></div></div><div class="two"><div><label for="no">السعر القديم (اختياري)</label><input id="no" type="number"></div><div><label for="nst">المخزون (اختياري)</label><input id="nst" type="number" min="0"></div></div><div class="two"><div><label for="nb">شارة (اختياري)</label><input id="nb" placeholder="جديد / خصم"></div><label class="ck" style="margin-top:34px"><input type="checkbox" id="nh">🔥 منتج رائج</label></div><label for="ni">صورة المنتج</label><input id="ni" type="file" accept="image/*">${aerr}<button class="big next" id="aadd" style="margin-top:8px">➕ إضافة المنتج</button>`;
+  }else if(cur==="links"){
+    const base=location.href.split("#")[0];
+    body=`<h4>روابط مباشرة للمنتجات (الزبون يفتح المنتج بنقرة)</h4>`+P.map(x=>`<div class="arow" style="grid-template-columns:1fr auto"><span>${esc(x.n)}<small style="display:block;color:var(--muted);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis">${base}#p-${x.id}</small></span><button class="big sec" style="width:auto;padding:6px 14px" data-copy="${base}#p-${x.id}">نسخ</button></div>`).join("")+`<p style="color:var(--muted);font-size:.85rem;margin-top:10px">انسخ الرابط من الموقع المنشور (مو من الملف المحلي) وارسله بالواتساب أو انستغرام.</p>`;
+  }else{
+    body=`<h4>الإعدادات</h4><div class="two"><div><label for="sd">سعر التوصيل (د.ع)</label><input id="sd" type="number" value="${DELIVERY}"></div><div><label for="sw">رقم واتساب (دولي بدون +)</label><input id="sw" value="${WHATSAPP}" inputmode="numeric"></div></div><button class="big sec" id="aset" style="margin-top:8px">💾 حفظ الإعدادات</button>
+    <h4>🎟️ أكواد الخصم</h4>${Object.keys(COUPONS).map(k=>`<div class="arow" style="grid-template-columns:1fr auto auto"><span>${esc(k)}</span><b>${COUPONS[k]}%</b><button class="del" data-cdel="${esc(k)}" aria-label="حذف الكود">🗑️</button></div>`).join("")}<div class="two"><input id="cc" placeholder="الكود (مثال: EID20)"><input id="cp" type="number" min="1" max="90" placeholder="النسبة %"></div><button class="big sec" id="cadd" style="margin-top:8px">➕ إضافة كود</button>
+    <h4>💬 تعليقات الزبائن (انشر اللي توصلك على الواتساب)</h4><div class="two"><select id="rvp">${P.map(x=>`<option value="${x.id}">${esc(x.n)}</option>`).join("")}</select><input id="rvn" placeholder="اسم الزبون"></div><div class="two"><select id="rvs"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select><input id="rvt" placeholder="نص التعليق"></div><button class="big sec" id="rvadd" style="margin-top:8px">نشر التعليق</button>${P.flatMap(x=>(x.rv||[]).map((r,i)=>`<div class="arow" style="grid-template-columns:1fr auto"><span>${esc(x.n)}: ${esc(r.n)} (${r.s}⭐) ${esc(r.t)}</span><button class="del" data-rvdel="${x.id}:${i}" aria-label="حذف التعليق">🗑️</button></div>`)).join("")}
+    ${aerr}<div class="btns">${db?`<button class="big sec" id="aseed">☁️ نشر الآن للجميع</button>`:""}<button class="big sec" id="aexp">⬇️ تحميل ملف البيانات للنشر</button><button class="big sec" id="areset">♻️ تصفير التعديلات</button></div>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:10px">${db?`✅ متصل بقاعدة البيانات: أي تعديل ينتشر للزبائن مباشرة.`:`ملاحظة: التعديلات تنحفظ بمتصفحك. بعد ما تخلص اضغط "تحميل ملف البيانات"، وارفع الملف store-data.json على GitHub بنفس مكان index.html واستبدل القديم، وتظهر للزبائن.`}</p>`;
+  }
+  modal(head("🛠️ لوحة التحكم")+tabs+body);
 }
 const readImg=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);r(c.toDataURL("image/jpeg",.7));};im.src=fr.result;};fr.readAsDataURL(f);});
 $("mbtn").onclick=()=>{$("menu").classList.add("open");$("shade").classList.add("on");$("menu").setAttribute("aria-hidden","false");};
 $("mclose").onclick=()=>drawer(false);
 $("devbtn").onclick=()=>admin?(drawer(false),adminView()):loginView();
+let orders=[],unsub=null,ready=false,cur="dash",ofil="all",curOid="",deepDone=false;
 let admin=false;
 const remember=()=>{try{localStorage.setItem("taj_adm","1");}catch(e){}};
-if(!FB){try{if(localStorage.getItem("taj_adm")==="1"){admin=true;$("exit").hidden=false;}}catch(e){}}
+if(!FB){try{if(localStorage.getItem("taj_adm")==="1"){admin=true;$("exit").hidden=false;loadOrders();}}catch(e){}}
 if(FB&&window.firebase){
   firebase.initializeApp(FB);db=firebase.firestore();auth=firebase.auth();
-  db.doc("store/main").onSnapshot(sn=>{if(sn.exists){const d=sn.data();try{P.length=0;P.push(...JSON.parse(d.P));DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;refresh();}catch(e){}}});
-  auth.onAuthStateChanged(u=>{admin=!!u;$("exit").hidden=!u;});
+  db.doc("store/main").onSnapshot(sn=>{if(sn.exists){const d=sn.data();try{P.length=0;P.push(...JSON.parse(d.P));DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;refresh();}catch(e){}}});
+  auth.onAuthStateChanged(u=>{admin=!!u;$("exit").hidden=!u;if(u)loadOrders();else{orders=[];if(unsub){unsub();unsub=null;ready=false;}badge();}});
 }
-$("exit").onclick=()=>{if(auth)auth.signOut();try{localStorage.removeItem("taj_adm");}catch(e){}admin=false;$("exit").hidden=true;drawer(false);toast("تم تسجيل الخروج");};
+$("exit").onclick=()=>{if(auth)auth.signOut();try{localStorage.removeItem("taj_adm");}catch(e){}admin=false;$("exit").hidden=true;orders=[];if(unsub){unsub();unsub=null;ready=false;}badge();drawer(false);toast("تم تسجيل الخروج");};
 $("mdl").addEventListener("click",async e=>{
   const t=e.target;
   if(t.id==="mdl"||t.dataset.close!==undefined){$("mdl").hidden=true;return;}
-  if(t.id==="dgo"&&auth){try{await auth.signInWithEmailAndPassword($("dn").value.trim(),$("dp").value);admin=true;$("exit").hidden=false;remember();adminView();}catch(err){$("derr").textContent="البريد أو الرمز غير صحيح.";}return;}
-  if(t.id==="dgo"){const n=$("dn").value.trim().toLowerCase(),h=await sha($("dp").value);if(DEVS[n]&&DEVS[n]===h){admin=true;$("exit").hidden=false;remember();adminView();}else $("derr").textContent="الاسم أو الرمز غير صحيح.";}
+  if(t.id==="dgo"&&auth){try{await auth.signInWithEmailAndPassword($("dn").value.trim(),$("dp").value);admin=true;$("exit").hidden=false;remember();loadOrders();adminView();}catch(err){$("derr").textContent="البريد أو الرمز غير صحيح.";}return;}
+  if(t.id==="dgo"){const n=$("dn").value.trim().toLowerCase(),h=await sha($("dp").value);if(DEVS[n]&&DEVS[n]===h){admin=true;$("exit").hidden=false;remember();loadOrders();adminView();}else $("derr").textContent="الاسم أو الرمز غير صحيح.";}
   if(t.dataset.del&&confirm("تحذف هذا المنتج؟")){const i=P.findIndex(p=>p.id==t.dataset.del);P.splice(i,1);delete cart[t.dataset.del];save();refresh();adminView();}
   if(t.id==="aset"){DELIVERY=Math.max(0,+$("sd").value||0);WHATSAPP=$("sw").value.replace(/\D/g,"")||WHATSAPP;save();refresh();toast("تم حفظ الإعدادات ✓");}
   if(t.id==="aadd"){
     const n=$("nn").value.trim(),c=$("nc").value.trim(),p=+$("np").value;
     if(!n||!c||!(p>0)){$("aerr").textContent="اكتب الاسم والقسم والسعر.";return;}
     const x={id:Math.max(0,...P.map(q=>q.id))+1,n,c,p,e:/موس/.test(c)?"mouse":/كيبورد/.test(c)?"kb":/لابتوب/.test(n)?"laptop":"pc"};
-    if(+$("no").value>p)x.o=+$("no").value; if($("nb").value.trim())x.b=$("nb").value.trim();if($("nd").value.trim())x.d=$("nd").value.trim();
+    if(+$("no").value>p)x.o=+$("no").value; if($("nb").value.trim())x.b=$("nb").value.trim();if($("nd").value.trim())x.d=$("nd").value.trim();if($("nst").value!=="")x.st=Math.max(0,Math.floor(+$("nst").value));if($("nh").checked)x.hot=true;
     if($("ni").files[0])x.img=await readImg($("ni").files[0]);
     P.push(x);save();refresh();adminView();toast("تمت إضافة المنتج ✓");
   }
   if(t.id==="aseed")save();
-  if(t.id==="aexp"){const bl=new Blob([JSON.stringify({P,DELIVERY,WHATSAPP})],{type:"application/json"}),l=document.createElement("a");l.href=URL.createObjectURL(bl);l.download="store-data.json";l.click();toast("نزل الملف store-data.json: ارفعه على GitHub");}
+  if(t.id==="aexp"){const bl=new Blob([JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS})],{type:"application/json"}),l=document.createElement("a");l.href=URL.createObjectURL(bl);l.download="store-data.json";l.click();toast("نزل الملف store-data.json: ارفعه على GitHub");}
   if(t.id==="areset"&&confirm("ترجع المتجر للبيانات الأصلية؟")){try{localStorage.removeItem("taj_data");}catch(e){}location.reload();}
 });
 $("mdl").addEventListener("change",e=>{
-  const t=e.target,x=P.find(p=>p.id==(t.dataset.pr||t.dataset.out));if(!x)return;
+  const t=e.target;
+  if(t.dataset.ost){setStatus(t.dataset.ost,t.value);adminView();return;}
+  if(t.id==="ofil"){ofil=t.value;adminView();return;}
+  const x=P.find(p=>p.id==(t.dataset.pr||t.dataset.out||t.dataset.stk||t.dataset.hot));if(!x)return;
   if(t.dataset.pr)x.p=Math.max(0,+t.value||0);
   if(t.dataset.out!==undefined)x.out=t.checked;
-  if(x.out)delete cart[x.id];
+  if(t.dataset.hot!==undefined)x.hot=t.checked;
+  if(t.dataset.stk!==undefined){if(t.value==="")delete x.st;else x.st=Math.max(0,Math.floor(+t.value));}
+  if(oos(x))delete cart[x.id];
   save();refresh();
+});
+$("mdl").addEventListener("click",e=>{
+  const t=e.target,tb=t.closest("[data-tab]");
+  if(tb){cur=tb.dataset.tab;adminView();return;}
+  if(t.dataset.odel&&confirm("تحذف هذا الطلب؟")){delOrder(t.dataset.odel);adminView();}
+  if(t.dataset.copy){navigator.clipboard.writeText(t.dataset.copy).then(()=>toast("تم نسخ الرابط ✓")).catch(()=>toast("المتصفح منع النسخ"));}
 });
 
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -467,6 +534,8 @@ $("mdl").addEventListener("click",e=>{
     window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(m),"_blank");
     $("mdl").hidden=true;toast("شكراً لك! وصل تعليقك لصاحب المتجر");
   }
+  if(t.id==="cadd"){const cd=$("cc").value.trim(),pc=Math.round(+$("cp").value);if(!cd||!(pc>=1&&pc<=90)){$("aerr").textContent="اكتب الكود ونسبة من 1 إلى 90.";return;}COUPONS[cd]=pc;save();adminView();toast("تمت إضافة الكود ✓");}
+  if(t.dataset.cdel){delete COUPONS[t.dataset.cdel];save();adminView();}
   if(t.id==="rvadd"){
     const x=P.find(p=>p.id==$("rvp").value),n=$("rvn").value.trim(),c=$("rvt").value.trim();
     if(!x||!n||!c){$("aerr").textContent="اكتب اسم الزبون ونص التعليق.";return;}
@@ -479,7 +548,7 @@ const DESC={pc:"حاسبة قوية للعمل والدراسة والألعاب
 const descOf=x=>x.d||(x.e.startsWith("kb")?DESC.kb:x.e.startsWith("mouse")?DESC.mouse:DESC[x.e])||"";
 function openQV(id){
   const x=P.find(p=>p.id==id);if(!x)return;const r=(x.rv||[]).length;
-  modal(head(esc(x.n))+`<div class="qpic">${ICON[x.e]||""}${x.img?`<img src="${x.img}" alt="${esc(x.n)}">`:""}</div><p style="color:var(--muted)">${esc(x.c)}${r?` · ⭐${avg(x)} (${r})`:""}</p><p>${esc(descOf(x))}</p><div class="qprice">${x.o?`<s>${fmt(x.o)}</s> `:""}<b>${fmt(x.p)}</b></div>${x.out?'<p class="err">نفد من المخزون حالياً</p>':`<div class="qty" style="margin:10px 0"><button data-qm="1" aria-label="إنقاص">−</button><span id="qq">1</span><button data-qp="1" aria-label="زيادة">+</button></div><button class="big next" id="qadd" data-qid="${x.id}">🛒 أضف للسلة</button>`}<div class="btns"><button class="big sec" data-rv="${x.id}">💬 التعليقات</button><a class="big sec" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(x.n+" - "+fmt(x.p)+" "+location.href)}">📤 مشاركة</a></div>`);
+  modal(head(esc(x.n))+`<div class="qpic">${ICON[x.e]||""}${x.img?`<img src="${x.img}" alt="${esc(x.n)}">`:""}</div><p style="color:var(--muted)">${esc(x.c)}${r?` · ⭐${avg(x)} (${r})`:""}</p><p>${esc(descOf(x))}</p><div class="qprice">${x.o?`<s>${fmt(x.o)}</s> `:""}<b>${fmt(x.p)}</b></div>${oos(x)?'<p class="err">نفد من المخزون حالياً</p>':`<div class="qty" style="margin:10px 0"><button data-qm="1" aria-label="إنقاص">−</button><span id="qq">1</span><button data-qp="1" aria-label="زيادة">+</button></div><button class="big next" id="qadd" data-qid="${x.id}">🛒 أضف للسلة</button>`}<div class="btns"><button class="big sec" data-rv="${x.id}">💬 التعليقات</button><a class="big sec" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(x.n+" - "+fmt(x.p)+" "+location.href)}">📤 مشاركة</a></div>`);
 }
 $("mdl").addEventListener("click",e=>{const t=e.target;
   if(t.dataset.qm!==undefined){const q=$("qq");q.textContent=Math.max(1,+q.textContent-1);}
@@ -502,8 +571,9 @@ $("inst").onclick=async()=>{
   modal(head("📲 تثبيت التطبيق")+`<p><b>آيفون (Safari):</b> اضغط زر المشاركة ⬆️ ثم <b>إضافة إلى الشاشة الرئيسية</b>.</p><p><b>أندرويد (Chrome):</b> اضغط ⋮ ثم <b>تثبيت التطبيق</b> أو <b>إضافة إلى الشاشة الرئيسية</b>.</p><p style="color:var(--muted)">بعدها يظهر الريحان كتطبيق بأيقونته على شاشتك ويفتح بدون شريط المتصفح.</p>`);
 };
 setSup();stats();
-if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;refresh();}).catch(()=>{});}
-renderChips();renderGrid();renderCart();
+if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;refresh();}).catch(()=>{});}
+function deep(){if(deepDone)return;const m=/^#p-(\d+)$/.exec(location.hash);if(m&&P.find(p=>p.id==+m[1])){deepDone=true;openQV(+m[1]);}}
+renderChips();renderGrid();renderCart();badge();deep();
 </script>
 </body>
 </html>
