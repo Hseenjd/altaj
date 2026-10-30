@@ -142,7 +142,7 @@ async function loadData(){
 }
 function save(){
   if(db){if(!admin){toast("سجّل دخول أولاً");return;}
-    db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP,COUPONS}).then(()=>toast("تم النشر للجميع ✓")).catch(()=>toast("فشل النشر: تأكد من الصلاحيات"));return;}
+    db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP,COUPONS}).then(()=>toast("تم النشر للجميع ✓")).catch(e=>{console.error(e);toast("فشل النشر: "+(e.code||e.message))});return;}
   try{localStorage.setItem("taj_data",JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}));toast("تم الحفظ ✓");}catch(e){toast("ما انحفظ: الذاكرة ممتلئة");}
 }
 const ordersLocal=()=>{try{return JSON.parse(localStorage.getItem("taj_orders")||"[]");}catch(e){return [];}};
