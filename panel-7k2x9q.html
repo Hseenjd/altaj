@@ -84,6 +84,9 @@ header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;bac
 .petal{box-shadow:none!important}
 .card{contain:layout paint}
 @media (max-width:700px){.petal:nth-child(n+9){display:none}.adbtn::after{animation:none}.ade{animation:none}.fc{animation:none}}
+.chart{display:flex;gap:8px;height:170px;padding:12px 10px 8px;border:1px solid rgba(212,175,55,.25);border-radius:14px;background:rgba(212,175,55,.04);margin-bottom:12px}
+.cb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}.cb b{font-size:.8rem}.cb small{font-size:.68rem;opacity:.7;white-space:nowrap}
+.bw{flex:1;width:100%;display:flex;align-items:flex-end}.bw i{display:block;width:100%;border-radius:6px 6px 0 0;background:linear-gradient(#f5d76e,#b8860b);transition:height .5s}
 </style>
 </head>
 <body>
@@ -136,7 +139,7 @@ const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new T
 const ST={pending:"قيد الانتظار",prep:"قيد التجهيز",ship:"تم الشحن",done:"تم التوصيل",cancel:"ملغي"};
 const TABS=[["dash","📊 اللوحة"],["orders","🧾 الطلبات"],["prod","📦 المنتجات"],["mkt","🎟️ الأكواد والتعليقات"],["set","⚙️ الإعدادات"]];
 let P=[],DELIVERY=5000,WHATSAPP="9647771928004",COUPONS={},orders=[];
-let pcat="الكل",tab="dash",ofil="all",psq="",db=null,auth=null,admin=false,unsub=null,ready=false,pimg=null,pdel=false,editId=null;
+let pcat="الكل",tab="dash",ofil="all",osq="",psq="",db=null,auth=null,admin=false,unsub=null,ready=false,pimg=null,pdel=false,editId=null;
 
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),1600);}
 const ico=x=>x.e&&x.e.startsWith("kb")?"⌨️":x.e&&x.e.startsWith("mouse")?"🖱️":x.e==="laptop"?"💻":"🖥️";
@@ -185,20 +188,33 @@ function renderTabs(){
   const np=orders.filter(o=>o.status==="pending").length;
   $("tabs").innerHTML=TABS.map(([k,l])=>`<button class="tab${k===tab?" on":""}" data-tab="${k}">${l}${k==="orders"&&np?` <span class="nb">${np}</span>`:""}</button>`).join("");
 }
+const ofilter=()=>{const q=norm(osq||"");return orders.filter(o=>(ofil==="all"||o.status===ofil)&&(!q||norm([o.id,o.name,o.phone,o.prov,o.addr,o.note||"",...o.items.map(i=>i.n)].join(" ")).includes(q)));};
+function ordersList(){const list=ofilter();return `<p class="note" style="margin:4px 0">${list.length} طلب</p>`+(list.map(o=>`<details class="ord"><summary><span>#${o.id} · ${esc(o.name)} · ${ST[o.status]}</span><b>${fmt(o.total)}</b></summary>
+    <p>${new Date(o.t).toLocaleString("ar-IQ")}</p><p>📞 ${esc(o.phone)} · 📍 ${esc(o.prov)}، ${esc(o.addr)}</p>${o.note?`<p>📝 ${esc(o.note)}</p>`:""}
+    <p>${o.items.map(i=>esc(i.n)+" × "+i.q).join("<br>")}</p><p>${o.disc?`خصم: -${fmt(o.disc)} · `:""}التوصيل: ${fmt(o.del)} · <b>المجموع: ${fmt(o.total)}</b></p>
+    <div class="ctl"><select data-ost="${o.id}" style="width:auto">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}">💬 واتساب الزبون</a><button data-odel="${o.id}">🗑️ حذف</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');}
+function exportCSV(){const l=ofilter();if(!l.length){toast("ما كو طلبات للتصدير");return;}
+ const q=s=>{let v=String(s==null?"":s);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};
+ const rows=[["رقم الطلب","التاريخ","الاسم","الهاتف","المحافظة","العنوان","المنتجات","المجموع","التوصيل","الإجمالي","الحالة","ملاحظات"]].concat(l.map(o=>[o.id,new Date(o.t).toLocaleString("en-GB"),o.name,o.phone,o.prov,o.addr,o.items.map(i=>i.n+" × "+i.q).join(" | "),o.sub,o.del,o.total,ST[o.status],o.note||""]));
+ const blob=new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);a.download="orders-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);toast("تم تصدير "+l.length+" طلب ✓");}
+function dashExtra(){const ok=orders.filter(o=>o.status!=="cancel"),now=Date.now(),day=864e5,sod=new Date().setHours(0,0,0,0),sum=l=>l.reduce((s,o)=>s+(+o.total||0),0),inR=ms=>ok.filter(o=>o.t>=ms);
+ const td=inR(sod),wk=inR(now-7*day),mo=inR(now-30*day),avg=ok.length?Math.round(sum(ok)/ok.length):0,tp={};
+ ok.forEach(o=>o.items.forEach(i=>{tp[i.n]=(tp[i.n]||0)+i.q;}));
+ const top=Object.entries(tp).sort((x,y)=>y[1]-x[1]).slice(0,5),days=[...Array(7)].map((_,k)=>{const s=sod-(6-k)*day,l=ok.filter(o=>o.t>=s&&o.t<s+day);return{d:new Date(s).toLocaleDateString("ar-IQ",{weekday:"short"}),n:l.length,v:sum(l)};}),mx=Math.max(1,...days.map(x=>x.v));
+ return `<h2>💰 المبيعات</h2><div class="stats"><div class="st"><b>${fmt(sum(td))}</b><small>اليوم (${td.length} طلب)</small></div><div class="st"><b>${fmt(sum(wk))}</b><small>آخر 7 أيام (${wk.length})</small></div><div class="st"><b>${fmt(sum(mo))}</b><small>آخر 30 يوم (${mo.length})</small></div><div class="st"><b>${fmt(avg)}</b><small>متوسط الطلب</small></div></div>
+ <h2>📈 آخر 7 أيام</h2><div class="chart">${days.map(x=>`<div class="cb"><b>${x.n}</b><div class="bw"><i style="height:${Math.max(3,Math.round(x.v/mx*100))}%"></i></div><small>${x.d}</small></div>`).join("")}</div>
+ <h2>🏆 الأكثر طلباً</h2>${top.map(([n,q],i)=>`<div class="row"><span>${i+1}. ${esc(n)}</span><b>${q} ×</b></div>`).join("")||'<p class="empty">ما كو بيانات للحين.</p>'}`;}
 function render(){
   renderTabs();const v=$("view");
   const np=orders.filter(o=>o.status==="pending").length;
   if(tab==="dash"){
     const rev=orders.filter(o=>o.status!=="cancel").reduce((a,o)=>a+o.total,0);
     v.innerHTML=`<div class="stats"><div class="st"><b>${orders.length}</b><small>إجمالي الطلبات</small></div><div class="st"><b>${np}</b><small>بانتظار المعالجة</small></div><div class="st"><b>${fmt(rev)}</b><small>إجمالي المبيعات</small></div><div class="st"><b>${P.length}</b><small>المنتجات</small></div><div class="st"><b>${P.filter(x=>x.out||x.st===0).length}</b><small>نفد من المخزون</small></div><div class="st"><b>${Object.keys(COUPONS).length}</b><small>أكواد الخصم</small></div></div>
-    <h2>آخر الطلبات</h2>${orders.slice(0,6).map(o=>`<div class="row"><span>#${o.id} · ${esc(o.name)}</span><b>${fmt(o.total)}</b><span>${ST[o.status]}</span></div>`).join("")||'<p class="empty">ما كو طلبات للحين.</p>'}
+    ${dashExtra()}<h2>آخر الطلبات</h2>${orders.slice(0,6).map(o=>`<div class="row"><span>#${o.id} · ${esc(o.name)}</span><b>${fmt(o.total)}</b><span>${ST[o.status]}</span></div>`).join("")||'<p class="empty">ما كو طلبات للحين.</p>'}
     ${db?"":'<p class="note">⚠️ بدون Firebase تظهر هنا فقط الطلبات اللي تسويها من هذا الجهاز وهذا المتصفح. لعرض طلبات كل الزبائن فعّل Firebase (ملف config.js).</p>'}`;
   }else if(tab==="orders"){
-    const list=orders.filter(o=>ofil==="all"||o.status===ofil);
-    v.innerHTML=`<select id="ofil"><option value="all">كل الحالات</option>${Object.keys(ST).map(k=>`<option value="${k}"${ofil===k?" selected":""}>${ST[k]}</option>`).join("")}</select>`+(list.map(o=>`<details class="ord"><summary><span>#${o.id} · ${esc(o.name)} · ${ST[o.status]}</span><b>${fmt(o.total)}</b></summary>
-    <p>${new Date(o.t).toLocaleString("ar-IQ")}</p><p>📞 ${esc(o.phone)} · 📍 ${esc(o.prov)}، ${esc(o.addr)}</p>${o.note?`<p>📝 ${esc(o.note)}</p>`:""}
-    <p>${o.items.map(i=>esc(i.n)+" × "+i.q).join("<br>")}</p><p>${o.disc?`خصم: -${fmt(o.disc)} · `:""}التوصيل: ${fmt(o.del)} · <b>المجموع: ${fmt(o.total)}</b></p>
-    <div class="ctl"><select data-ost="${o.id}" style="width:auto">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}">💬 واتساب الزبون</a><button data-odel="${o.id}">🗑️ حذف</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');
+    v.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><input id="osq" type="search" placeholder="🔍 ابحث: اسم، هاتف، رقم طلب، منتج…" value="${esc(osq)}" style="flex:1 1 200px;margin:0"><select id="ofil" style="width:auto;margin:0"><option value="all">كل الحالات</option>${Object.keys(ST).map(k=>`<option value="${k}"${ofil===k?" selected":""}>${ST[k]}</option>`).join("")}</select><button class="btn g" data-export>📥 تصدير CSV</button></div><div id="olist">${ordersList()}</div>`;
   }else if(tab==="prod"){
     v.innerHTML=`<div class="bar" style="position:sticky;top:106px;z-index:3;background:var(--bg);padding:6px 0"><input id="psq" type="search" placeholder="ابحث: كبل، كيبورد، موس، لابتوب…" value="${esc(psq)}"><button class="btn g" data-new>➕ منتج جديد</button></div><div class="pchips" id="pchips">${pChips()}</div><div id="plist">${prodCards()}</div>`;
   }else if(tab==="mkt"){
@@ -232,6 +248,7 @@ const readImg=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const 
 document.addEventListener("click",async e=>{
   const t=e.target,tb=t.closest("[data-tab]");
   if(tb){tab=tb.dataset.tab;render();return;}
+   if(t.dataset.export!==undefined){exportCSV();return;}
   if(t.dataset.pc!==undefined){pcat=t.dataset.pc;$("pchips").innerHTML=pChips();$("plist").innerHTML=prodCards();return;}
   if(t.id==="mdl"||t.dataset.close!==undefined){closeM();return;}
   if(t.id==="lgo")return doLogin();
@@ -264,7 +281,7 @@ document.addEventListener("click",async e=>{
     save();closeM();render();
   }
 });
-document.addEventListener("input",e=>{if(e.target.id==="psq"){psq=e.target.value;$("plist").innerHTML=prodCards();}});
+document.addEventListener("input",e=>{if(e.target.id==="osq"){osq=e.target.value;$("olist").innerHTML=ordersList();return;}if(e.target.id==="psq"){psq=e.target.value;$("plist").innerHTML=prodCards();}});
 document.addEventListener("change",async e=>{
   const t=e.target;
   if(t.id==="showp"){$("lp").type=t.checked?"text":"password";return;}
