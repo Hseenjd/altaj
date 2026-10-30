@@ -101,7 +101,7 @@ header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;bac
 </div>
 
 <div id="app" hidden>
-  <header><b>💎 لوحة الإدارة</b><div><a href="index.html" target="_blank" rel="noopener">🛍️ المتجر</a><button class="btn s" id="out">خروج</button></div></header>
+  <header><b>💎 لوحة الإدارة</b><div><a href="index.html" target="_blank" rel="noopener">🛍️ المتجر</a><button class="btn s" id="inst" style="white-space:nowrap">📲 تثبيت</button><button class="btn s" id="out">خروج</button></div></header>
   <nav class="tabs" id="tabs" aria-label="أقسام اللوحة"></nav>
   <main id="view"></main>
 </div>
@@ -313,7 +313,6 @@ setInterval(()=>{if(admin&&Date.now()-lastAct>1800000){doLogout();$("lerr").text
   }
 })();
 </script>
-<button id="inst" hidden style="position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));inset-inline-start:14px;z-index:60;padding:10px 16px;border-radius:999px;font:inherit;font-weight:800;background:linear-gradient(135deg,#f5d76e,#d4af37);color:#1a1200;border:0;box-shadow:0 8px 22px rgba(0,0,0,.5);cursor:pointer">📲 ثبّت لوحة الإدارة</button>
 <script>
 const STANDALONE=matchMedia("(display-mode:standalone)").matches||navigator.standalone===true;let dip=null;
 addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;});
@@ -323,7 +322,7 @@ function how(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),s=documen
  s.innerHTML=`<div style="background:#17130a;border:1px solid rgba(212,175,55,.3);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;color:#fbf6e9;font-family:inherit;line-height:1.8"><b style="font-size:1.15rem;color:#f0d36b">طريقة التثبيت</b><p style="margin:8px 0 14px">${ios?"اضغط زر المشاركة ⬆️ بالأسفل، ثم اختر «إضافة إلى الشاشة الرئيسية».":"افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».<br>وإذا فتحت الرابط من داخل واتساب أو تلگرام، افتحه أولاً بمتصفح كروم."}</p><button style="width:100%;padding:12px;border-radius:12px;font:inherit;font-weight:800;background:linear-gradient(135deg,#f5d76e,#d4af37);color:#1a1200;border:0">تمام</button></div>`;
  s.onclick=e=>{if(e.target===s||e.target.tagName==="BUTTON")s.remove();};document.body.appendChild(s);}
 async function inst(){if(dip){dip.prompt();try{const r=await dip.userChoice;if(r.outcome==="accepted")dip=null;}catch(e){}return;}how();}
-const ib=document.getElementById("inst");if(!STANDALONE){ib.hidden=false;ib.onclick=inst;}
+const ib=document.getElementById("inst");if(STANDALONE)ib.remove();else ib.onclick=inst;
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
