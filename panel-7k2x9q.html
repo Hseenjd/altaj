@@ -72,6 +72,18 @@ header,.tabs{background:rgba(10,8,4,.88)!important;backdrop-filter:blur(10px)}
 .pc:hover,.card:hover{border-color:#d4af37;box-shadow:0 0 0 1px #d4af37,0 10px 28px rgba(212,175,55,.3)}
 header b,.card h1{background:linear-gradient(90deg,#f0dc8a,#f0d36b);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lg{position:relative}.petal{z-index:-1;opacity:.55}
+
+/* ===== تخفيف الحمل: بدون حركات خلفية ثقيلة ===== */
+body{animation:none!important;background-attachment:scroll}
+.h2in{animation:none!important;background-size:100% 100%}
+.splash{animation:spOut .6s ease 4.2s forwards!important;background-size:100% 100%}
+#stars{display:none!important}
+header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(10,8,4,.96)!important}
+.card,.perk,.tile,.st,.pc,.ord,footer.ft{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.ade{filter:none!important;text-shadow:0 6px 24px rgba(212,175,55,.35)}
+.petal{box-shadow:none!important}
+.card{contain:layout paint}
+@media (max-width:700px){.petal:nth-child(n+9){display:none}.adbtn::after{animation:none}.ade{animation:none}.fc{animation:none}}
 </style>
 </head>
 <body>
@@ -158,7 +170,7 @@ function delOrder(id){orders=orders.filter(x=>x.id!==id);if(db)db.collection("or
 
 // ===== العرض =====
 function pChips(){return ["الكل",...new Set(P.map(x=>x.c))].map(c=>`<button class="pchip${c===pcat?" on":""}" data-pc="${esc(c)}">${esc(c)} (${c==="الكل"?P.length:P.filter(x=>x.c===c).length})</button>`).join("");}
-function pCard(x){return `<div class="pc"><div class="th">${x.img?`<img src="${x.img}" alt="">`:ico(x)}</div><div class="pi"><b>${esc(x.n)}</b><small>${esc(x.c)}${x.o?` · كان ${fmt(x.o)}`:""}</small>
+function pCard(x){return `<div class="pc"><div class="th">${x.img?`<img loading="lazy" decoding="async" src="${x.img}" alt="">`:ico(x)}</div><div class="pi"><b>${esc(x.n)}</b><small>${esc(x.c)}${x.o?` · كان ${fmt(x.o)}`:""}</small>
     <div class="pf"><label>السعر (د.ع)<input type="number" min="0" step="500" data-pr="${x.id}" value="${x.p}"></label><label>المخزون<input type="number" min="0" data-stk="${x.id}" value="${x.st==null?"":x.st}" placeholder="—"></label></div>
     <div class="tgls"><label class="tgl"><input type="checkbox" data-avail="${x.id}" ${x.out?"":"checked"}>${x.out?"❌ نفد":"✅ متوفر"}</label><label class="tgl"><input type="checkbox" data-hot="${x.id}" ${x.hot?"checked":""}>🔥 رائج</label></div>
     <div class="acts"><button data-edit="${x.id}">✏️ تعديل</button><button data-link="${x.id}">🔗 رابط</button><button class="dl" data-del="${x.id}">🗑️ حذف</button></div></div></div>`;}
@@ -211,7 +223,7 @@ function productForm(id,nm){
   <div class="two"><div><label for="fo">السعر القديم (اختياري)</label><input id="fo" type="number" min="0" value="${x.o||""}"></div><div><label for="fs">المخزون (اختياري)</label><input id="fs" type="number" min="0" value="${x.st==null?"":x.st}"></div></div>
   <div class="two"><div><label for="fb">شارة (اختياري)</label><input id="fb" placeholder="جديد / خصم" value="${esc(x.b||"")}"></div><label style="display:flex;gap:6px;align-items:center;margin-top:34px"><input type="checkbox" id="fh" style="width:auto" ${x.hot?"checked":""}>🔥 منتج رائج</label></div>
   <label for="fi">صورة المنتج</label><input id="fi" type="file" accept="image/*">
-  ${x.img?`<img class="prev" id="prev" src="${x.img}" alt=""><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="frm" style="width:auto">إزالة الصورة الحالية</label>`:`<img class="prev" id="prev" alt="" hidden>`}
+  ${x.img?`<img loading="lazy" decoding="async" class="prev" id="prev" src="${x.img}" alt=""><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="frm" style="width:auto">إزالة الصورة الحالية</label>`:`<img loading="lazy" decoding="async" class="prev" id="prev" alt="" hidden>`}
   <p class="err" id="ferr" role="alert"></p><div class="ctl"><button class="btn g" id="fsave">💾 حفظ</button><button class="btn s" data-close>إلغاء</button></div>`);
 }
 const readImg=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);r(c.toDataURL("image/jpeg",.78));};im.src=fr.result;};fr.readAsDataURL(f);});
@@ -290,7 +302,7 @@ function doLogout(){
 }
 let lastAct=Date.now();["click","keydown","touchstart"].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now();}));
 setInterval(()=>{if(admin&&Date.now()-lastAct>1800000){doLogout();$("lerr").textContent="انتهت الجلسة بسبب عدم النشاط. سجّل دخول من جديد.";}},30000);
-(function(){const n=innerWidth<600?14:26;for(let i=0;i<n;i++){const p=document.createElement("i"),z=3+Math.random()*5;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*120-60}px;animation-duration:${8+Math.random()*10}s;animation-delay:${-Math.random()*16}s`;document.body.appendChild(p);}})();
+(function(){const n=innerWidth<600?7:12;for(let i=0;i<n;i++){const p=document.createElement("i"),z=3+Math.random()*5;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*120-60}px;animation-duration:${8+Math.random()*10}s;animation-delay:${-Math.random()*16}s`;document.body.appendChild(p);}})();
 (async()=>{
   if(FB&&window.firebase){
     firebase.initializeApp(FB);db=firebase.firestore();auth=firebase.auth();$("lul").textContent="البريد الإلكتروني";$("lu").placeholder="you@example.com";

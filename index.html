@@ -237,6 +237,29 @@ header{border-bottom:1px solid rgba(212,175,55,.3)}
  .adm{max-width:66%}
  .adots{display:flex;justify-content:center;gap:6px;margin-top:8px}.adots button{width:8px;height:8px;border-radius:999px;background:rgba(212,175,55,.35);padding:0;transition:width .2s,background .2s}.adots button.on{width:24px;background:#f0d36b}}
 @media (prefers-reduced-motion:reduce){.adc{opacity:1;translate:0 0;transition:none}.ade,.adbtn::after{animation:none}}
+
+/* ===== تخفيف الحمل: بدون حركات خلفية ثقيلة ===== */
+body{animation:none!important;background-attachment:scroll}
+.h2in{animation:none!important;background-size:100% 100%}
+.splash{animation:spOut .6s ease 4.2s forwards!important;background-size:100% 100%}
+#stars{display:none!important}
+header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(10,8,4,.96)!important}
+.card,.perk,.tile,.st,.pc,.ord,footer.ft{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.ade{filter:none!important;text-shadow:0 6px 24px rgba(212,175,55,.35)}
+.petal{box-shadow:none!important}
+.card{contain:layout paint}
+@media (max-width:700px){.petal:nth-child(n+9){display:none}.adbtn::after{animation:none}.ade{animation:none}.fc{animation:none}}
+
+/* ===== حركة الإعلانات (خفيفة: transform فقط) ===== */
+.adc.in{animation:adfloat 5s ease-in-out infinite;animation-delay:calc(var(--d,0s) * 5)}
+.adc:hover,.ads.held .adc{animation-play-state:paused}
+.ade{animation:adbob 3.4s ease-in-out infinite;will-change:transform}
+.adbtn::after{animation:adshine 3s ease-in-out infinite}
+.adp b{display:inline-block;animation:adpulse 2.6s ease-in-out infinite}
+@media (min-width:701px){.adc.hot{border-color:#f0d36b;box-shadow:0 18px 46px rgba(212,175,55,.32)}.adc.hot::before{opacity:1}.adc.hot .adtag{background:rgba(212,175,55,.3)}}
+@keyframes adfloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes adpulse{0%,100%{scale:1}50%{scale:1.06}}
+@media (prefers-reduced-motion:reduce){.adc.in,.adp b{animation:none}}
 </style>
 <script src="config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -457,6 +480,15 @@ const adDots=document.createElement("div");adDots.className="adots";adDots.inner
 let adRaf;adsEl.addEventListener("scroll",()=>{cancelAnimationFrame(adRaf);adRaf=requestAnimationFrame(()=>{const m=adsEl.getBoundingClientRect(),mid=m.left+m.width/2;let best=0,bd=1e9;adCards.forEach((c,i)=>{const r=c.getBoundingClientRect(),d=Math.abs(r.left+r.width/2-mid);if(d<bd){bd=d;best=i;}});adDots.querySelectorAll("button").forEach((b,i)=>b.classList.toggle("on",i===best));});},{passive:true});
 adDots.addEventListener("click",e=>{const b=e.target.closest("[data-adot]");if(b)adCards[+b.dataset.adot].scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});});
 setTimeout(()=>adCards.forEach(c=>c.classList.add("in")),2500);
+// حركة تلقائية: على الموبايل تنزلق البطاقات وحدها، وعلى الكمبيوتر الإضاءة تنتقل بين البطاقات
+let adI=0,adHold=false,adVis=true,adRel;
+new IntersectionObserver(es=>{adVis=es[0].isIntersecting;}).observe(adsEl);
+const adHoldOn=()=>{clearTimeout(adRel);adHold=true;adsEl.classList.add("held");},adHoldOff=(ms)=>{clearTimeout(adRel);adRel=setTimeout(()=>{adHold=false;adsEl.classList.remove("held");},ms);};
+adsEl.addEventListener("pointerdown",adHoldOn);adsEl.addEventListener("pointerup",()=>adHoldOff(4500));adsEl.addEventListener("pointercancel",()=>adHoldOff(4500));
+adsEl.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")adHoldOn();});adsEl.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse")adHoldOff(800);});
+if(!RMo)setInterval(()=>{if(adHold||!adVis||document.hidden)return;adI=(adI+1)%adCards.length;
+  if(matchMedia("(max-width:700px)").matches){const a=adsEl.getBoundingClientRect(),r=adCards[adI].getBoundingClientRect();adsEl.scrollBy({left:(r.left+r.width/2)-(a.left+a.width/2),behavior:"smooth"});}
+  else adCards.forEach((c,i)=>c.classList.toggle("hot",i===adI));},3200);
 document.addEventListener("click",e=>{
   const t=e.target;
   const qv=t.closest&&t.closest("[data-qv]");if(qv){openQV(+qv.dataset.qv);return;}
@@ -643,7 +675,7 @@ const DESC={pc:"حاسبة قوية للعمل والدراسة والألعاب
 const descOf=x=>x.d||(x.e.startsWith("kb")?DESC.kb:x.e.startsWith("mouse")?DESC.mouse:DESC[x.e])||"";
 function openQV(id){
   const x=P.find(p=>p.id==id);if(!x)return;const r=(x.rv||[]).length;
-  modal(head(esc(x.n))+`<div class="qpic">${ICON[x.e]||""}${x.img?`<img src="${x.img}" alt="${esc(x.n)}">`:""}</div><p style="color:var(--muted)">${esc(x.c)}${r?` · ⭐${avg(x)} (${r})`:""}</p><p>${esc(descOf(x))}</p><div class="qprice">${x.o?`<s>${fmt(x.o)}</s> `:""}<b>${fmt(x.p)}</b></div>${oos(x)?'<p class="err">نفد من المخزون حالياً</p>':`<div class="qty" style="margin:10px 0"><button data-qm="1" aria-label="إنقاص">−</button><span id="qq">1</span><button data-qp="1" aria-label="زيادة">+</button></div><button class="big next" id="qadd" data-qid="${x.id}">🛒 أضف للسلة</button>`}<div class="btns"><button class="big sec" data-rv="${x.id}">💬 التعليقات</button><a class="big sec" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(x.n+" - "+fmt(x.p)+" "+location.href)}">📤 مشاركة</a></div>`);
+  modal(head(esc(x.n))+`<div class="qpic">${ICON[x.e]||""}${x.img?`<img loading="lazy" decoding="async" src="${x.img}" alt="${esc(x.n)}">`:""}</div><p style="color:var(--muted)">${esc(x.c)}${r?` · ⭐${avg(x)} (${r})`:""}</p><p>${esc(descOf(x))}</p><div class="qprice">${x.o?`<s>${fmt(x.o)}</s> `:""}<b>${fmt(x.p)}</b></div>${oos(x)?'<p class="err">نفد من المخزون حالياً</p>':`<div class="qty" style="margin:10px 0"><button data-qm="1" aria-label="إنقاص">−</button><span id="qq">1</span><button data-qp="1" aria-label="زيادة">+</button></div><button class="big next" id="qadd" data-qid="${x.id}">🛒 أضف للسلة</button>`}<div class="btns"><button class="big sec" data-rv="${x.id}">💬 التعليقات</button><a class="big sec" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(x.n+" - "+fmt(x.p)+" "+location.href)}">📤 مشاركة</a></div>`);
 }
 $("mdl").addEventListener("click",e=>{const t=e.target;
   if(t.dataset.qm!==undefined){const q=$("qq");q.textContent=Math.max(1,+q.textContent-1);}
@@ -670,7 +702,7 @@ setSup();stats();
 if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;refresh();}).catch(()=>{});}
 [["name",60],["addr",200],["note",300],["phone",20]].forEach(([i,n])=>$(i).maxLength=n);
 {const sp=$("splash"),cl=()=>sp.classList.add("out");try{if(!sessionStorage.getItem("taj_sp")){sessionStorage.setItem("taj_sp","1");setTimeout(cl,3600);}}catch(e){setTimeout(cl,3600);}$("spgo").onclick=cl;}
-(function(){const n=innerWidth<600?14:26;for(let i=0;i<n;i++){const p=document.createElement("i"),z=3+Math.random()*5;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*120-60}px;animation-duration:${8+Math.random()*10}s;animation-delay:${-Math.random()*16}s`;document.body.appendChild(p);}})();
+(function(){const n=innerWidth<600?7:12;for(let i=0;i<n;i++){const p=document.createElement("i"),z=3+Math.random()*5;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*120-60}px;animation-duration:${8+Math.random()*10}s;animation-delay:${-Math.random()*16}s`;document.body.appendChild(p);}})();
 function deep(){if(deepDone)return;const m=/^#p-(\d+)$/.exec(location.hash);if(m&&P.find(p=>p.id==+m[1])){deepDone=true;openQV(+m[1]);}}
 renderChips();renderGrid();renderCart();badge();deep();
 </script>
