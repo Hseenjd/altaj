@@ -102,6 +102,18 @@ footer.ft{background:var(--s1);border-top:1px solid var(--line);padding:32px 20p
 .st{background:var(--s2);border:1px solid var(--line);border-radius:14px;padding:12px}.st b{display:block;font-size:1.3rem;color:var(--gold2)}.st small{color:var(--muted)}
 .ord{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-top:8px}.ord summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.ord p{margin:6px 0}
 .tg.has{position:relative}.tg.has::after{content:"";position:absolute;top:3px;right:3px;width:10px;height:10px;border-radius:50%;background:#e11d48}
+.splash{position:fixed;inset:0;z-index:300;background:radial-gradient(600px 400px at 80% 0,rgba(201,162,39,.35),transparent),linear-gradient(135deg,#06291d,#0f6b4f);color:#fff;display:grid;place-items:center;text-align:center;padding:24px;transition:opacity .6s,visibility .6s;animation:spOut .6s ease 4.2s forwards}
+.splash.out{opacity:0;visibility:hidden}@keyframes spOut{to{opacity:0;visibility:hidden}}
+.nosp .splash{display:none}
+.sp-in{max-width:420px;animation:up .8s both}.sp-logo{font-size:4rem;animation:fl 3s ease-in-out infinite}
+.sp-in h1{font-size:clamp(1.6rem,6vw,2.4rem);font-weight:900;line-height:1.3;margin:8px 0}.sp-in h1 span{color:#f3d77a}.sp-in p{color:#cfe3d8}
+.sp-go{margin-top:18px;background:#fff;color:#06291d;font-weight:800;padding:11px 30px;border-radius:999px}
+.sp-bar{height:3px;background:rgba(255,255,255,.25);border-radius:3px;margin-top:22px;overflow:hidden}.sp-bar i{display:block;height:100%;background:#f3d77a;width:0;animation:spbar 3.6s linear forwards}@keyframes spbar{to{width:100%}}
+.cats2{max-width:1150px;margin:0 auto;padding:6px 20px 0}
+.sec-t{font-size:1.3rem;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}.sec-t::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center;box-shadow:var(--shadow);transition:transform .2s,border-color .2s}
+.tile:hover{transform:translateY(-4px);border-color:var(--gold)}.tile *{pointer-events:none}.tile svg{width:100%;height:70px}.tile b{display:block}.tile small{color:var(--muted)}
 .soc{display:flex;gap:6px;margin-top:6px}
 .soc button{background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:.8rem}
 .rvc{border-bottom:1px solid var(--line);padding:8px 0}.rvc p{margin:2px 0;color:var(--muted)}
@@ -171,6 +183,8 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+<script>try{if(sessionStorage.getItem("taj_sp")||/^#p-/.test(location.hash))document.documentElement.classList.add("nosp");}catch(e){}</script>
+<div class="splash" id="splash" role="dialog" aria-label="ترحيب"><div class="sp-in"><div class="sp-logo">🌿</div><h1>مرحباً بك في <span>متجر الريحان</span></h1><p>أجهزة وإكسسوارات أصلية بتوصيل لكل المحافظات</p><button class="sp-go" id="spgo">ادخل المتجر</button><div class="sp-bar"><i></i></div></div></div>
 <div class="glow"></div>
 <div class="topbar">🚚 توصيل لكل المحافظات · 🛡️ ضمان على الأجهزة · 💬 اطلب عبر واتساب بدون تسجيل</div>
 <header>
@@ -193,6 +207,8 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
   <div class="perk"><b>💬</b><div>طلب عبر واتساب<small>بدون تسجيل</small></div></div>
 </section>
 
+<section class="cats2"><h2 class="sec-t">📂 تسوّق حسب القسم</h2><div class="tiles" id="tiles"></div></section>
+<h2 class="sec-t" style="max-width:1150px;margin:18px auto 0;padding:0 20px">🛍️ منتجاتنا</h2>
 <div class="bar" id="shop">
   <nav class="chips" id="chips" aria-label="الأقسام"></nav>
   <select id="sort" aria-label="ترتيب">
@@ -224,7 +240,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
       <label for="prov">المحافظة</label><select id="prov"></select>
       <label for="addr">المنطقة / العنوان</label><input id="addr" autocomplete="street-address">
       <label for="phone">رقم الهاتف</label><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="07xxxxxxxxx">
-      <label for="note">ملاحظات إضافية (اختياري)</label><input id="note" placeholder="أي ملاحظات تريد إضافتها…"><p class="err" id="err" role="alert"></p>
+      <input id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><label for="note">ملاحظات إضافية (اختياري)</label><input id="note" placeholder="أي ملاحظات تريد إضافتها…"><p class="err" id="err" role="alert"></p>
     </div>
     <div class="foot">
       <div class="sum t"><span>المجموع الكلي</span><span id="total2"></span></div>
@@ -384,14 +400,17 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")drawer(false);});
 $("go").onclick=()=>view("form");
 $("back").onclick=()=>view("cart");
 $("order").onclick=e=>{
+  if($("hp").value){e.preventDefault();return;}
   const t=totals(),ph=$("phone").value.replace(/\s/g,"");
-  let err="";
-  if(!t.count)err="أضف منتجاً للسلة أولاً.";
+  let err="";const last=(()=>{try{return +localStorage.getItem("taj_last")||0;}catch(x){return 0;}})();
+  if(Date.now()-last<30000)err="انتظر قليلاً قبل إرسال طلب ثاني.";
+  else if(!t.count)err="أضف منتجاً للسلة أولاً.";
   else if(!$("name").value.trim())err="اكتب اسمك.";
   else if(!$("addr").value.trim())err="اكتب المنطقة أو العنوان.";
   else if(!/^[0-9٠-٩]{10,11}$/.test(ph))err="اكتب رقم هاتف صحيح (10 أو 11 رقم).";
   $("err").textContent=err;
   if(err){e.preventDefault();return;}
+  try{localStorage.setItem("taj_last",Date.now());}catch(x){}
   curOid="R"+Date.now().toString(36).slice(-5).toUpperCase();
   addOrder({id:curOid,t:Date.now(),name:$("name").value.trim(),phone:ph.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)),prov:$("prov").value,addr:$("addr").value.trim(),note:$("note").value.trim(),items:Object.keys(cart).map(id=>{const x=P.find(p=>p.id==id);return {id:x.id,n:x.n,q:cart[id],p:x.p};}),sub:t.sub,disc:t.disc,coupon,del:t.del,total:t.total,status:"pending"});
   $("order").href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(buildMsg(t))}`;
@@ -556,7 +575,8 @@ $("mdl").addEventListener("click",e=>{const t=e.target;
   if(t.id==="qadd"){cart[t.dataset.qid]=(cart[t.dataset.qid]||0)+(+$("qq").textContent);renderCart();$("mdl").hidden=true;toast("تمت الإضافة للسلة ✓");}
 });
 $("cpnb").onclick=()=>{const c=$("cpn").value.trim().toLowerCase(),k=Object.keys(COUPONS).find(q=>q.toLowerCase()===c);coupon=k||"";toast(k?"تم تطبيق خصم "+COUPONS[k]+"% ✓":"كود الخصم غير صحيح");renderCart();};
-const stats=()=>{$("sN").textContent=P.length;$("sC").textContent=cats.length-1;$("sD").textContent=DELIVERY.toLocaleString("en-US");$("fcats").innerHTML=cats.slice(1).map(c=>`<button class="fl" data-c="${c}">${c}</button>`).join("");};
+function tiles(){const ic=c=>c.includes("موس")?"mouse":c.includes("ألعاب")?"kbrgb":c.includes("كيبورد")?"kb":c.includes("لابتوب")?"laptop":"pc";$("tiles").innerHTML=cats.slice(1).map(c=>`<button class="tile fl" data-c="${c}">${ICON[ic(c)]}<b>${c}</b><small>${P.filter(x=>x.c===c).length} منتج</small></button>`).join("");}
+const stats=()=>{tiles();$("sN").textContent=P.length;$("sC").textContent=cats.length-1;$("sD").textContent=DELIVERY.toLocaleString("en-US");$("fcats").innerHTML=cats.slice(1).map(c=>`<button class="fl" data-c="${c}">${c}</button>`).join("");};
 $("hv").innerHTML=`<div class="fc a">${ICON.laptop}</div><div class="fc b">${ICON.kbrgb}</div><div class="fc c">${ICON.mouseg}</div><div class="fc d">${ICON.pc}</div>`;
 // ===== تطبيق (PWA) =====
 if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
@@ -572,6 +592,8 @@ $("inst").onclick=async()=>{
 };
 setSup();stats();
 if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;refresh();}).catch(()=>{});}
+[["name",60],["addr",200],["note",300],["phone",20]].forEach(([i,n])=>$(i).maxLength=n);
+{const sp=$("splash"),cl=()=>sp.classList.add("out");try{if(!sessionStorage.getItem("taj_sp")){sessionStorage.setItem("taj_sp","1");setTimeout(cl,3600);}}catch(e){setTimeout(cl,3600);}$("spgo").onclick=cl;}
 function deep(){if(deepDone)return;const m=/^#p-(\d+)$/.exec(location.hash);if(m&&P.find(p=>p.id==+m[1])){deepDone=true;openQV(+m[1]);}}
 renderChips();renderGrid();renderCart();badge();deep();
 </script>
