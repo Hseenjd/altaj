@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="noindex,nofollow"><link rel="manifest" href="admin-manifest.json"><meta name="theme-color" content="#0b0905"><link rel="apple-touch-icon" href="admin-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="إدارة بكسل">
 <meta name="referrer" content="no-referrer">
 <title>لوحة إدارة متجر بكسل ستور</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
@@ -312,6 +312,19 @@ setInterval(()=>{if(admin&&Date.now()-lastAct>1800000){doLogout();$("lerr").text
     try{if(localStorage.getItem("taj_adm")==="1")enter();}catch(e){}
   }
 })();
+</script>
+<button id="inst" hidden style="position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));inset-inline-start:14px;z-index:60;padding:10px 16px;border-radius:999px;font:inherit;font-weight:800;background:linear-gradient(135deg,#f5d76e,#d4af37);color:#1a1200;border:0;box-shadow:0 8px 22px rgba(0,0,0,.5);cursor:pointer">📲 ثبّت لوحة الإدارة</button>
+<script>
+const STANDALONE=matchMedia("(display-mode:standalone)").matches||navigator.standalone===true;let dip=null;
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;});
+addEventListener("appinstalled",()=>{dip=null;document.querySelectorAll("[data-inst],#inst").forEach(x=>x.remove());});
+function how(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),s=document.createElement("div");
+ s.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:flex-end";
+ s.innerHTML=`<div style="background:#17130a;border:1px solid rgba(212,175,55,.3);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;color:#fbf6e9;font-family:inherit;line-height:1.8"><b style="font-size:1.15rem;color:#f0d36b">طريقة التثبيت</b><p style="margin:8px 0 14px">${ios?"اضغط زر المشاركة ⬆️ بالأسفل، ثم اختر «إضافة إلى الشاشة الرئيسية».":"افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».<br>وإذا فتحت الرابط من داخل واتساب أو تلگرام، افتحه أولاً بمتصفح كروم."}</p><button style="width:100%;padding:12px;border-radius:12px;font:inherit;font-weight:800;background:linear-gradient(135deg,#f5d76e,#d4af37);color:#1a1200;border:0">تمام</button></div>`;
+ s.onclick=e=>{if(e.target===s||e.target.tagName==="BUTTON")s.remove();};document.body.appendChild(s);}
+async function inst(){if(dip){dip.prompt();try{const r=await dip.userChoice;if(r.outcome==="accepted")dip=null;}catch(e){}return;}how();}
+const ib=document.getElementById("inst");if(!STANDALONE){ib.hidden=false;ib.onclick=inst;}
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
 </html>

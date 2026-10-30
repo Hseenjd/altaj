@@ -1,0 +1,28 @@
+{
+ "id": "./panel-7k2x9q.html",
+ "name": "إدارة بكسل ستور",
+ "short_name": "إدارة بكسل",
+ "description": "لوحة إدارة متجر بكسل ستور",
+ "lang": "ar",
+ "dir": "rtl",
+ "start_url": "./panel-7k2x9q.html",
+ "scope": "./panel-7k2x9q.html",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#0b0905",
+ "theme_color": "#0b0905",
+ "icons": [
+  {
+   "src": "admin-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "admin-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

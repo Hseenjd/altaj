@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0905"><title>بكسل ستور</title>
-<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="بكسل ستور"><link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0b0905;--card:#17130a;--line:rgba(212,175,55,.25);--g:#d4af37;--g2:#f0d36b;--ink:#fbf6e9;--mut:#cdbd8a;--red:#ff4a5c}
@@ -58,6 +58,7 @@ body{line-height:1.5}nav .n[hidden]{display:none}
 #wl.off{opacity:0;visibility:hidden}#wl svg{width:120px;height:120px;animation:pop .8s cubic-bezier(.2,1.4,.4,1) both;filter:drop-shadow(0 10px 24px rgba(212,175,55,.45))}
 #wl h2{font-size:2.2rem;font-weight:800;color:#fff3cf;animation:vin .6s .3s both}#wl p{color:var(--g2);font-weight:600;font-size:1.1rem;animation:vin .6s .5s both}
 @keyframes pop{from{scale:.3;opacity:0}}
+.inb{width:100%;display:flex;align-items:center;gap:12px;text-align:right;padding:12px 14px;margin-bottom:12px;border-radius:16px;background:linear-gradient(135deg,rgba(212,175,55,.22),rgba(212,175,55,.06));border:1px dashed var(--g)}.inb i{font-style:normal;font-size:1.6rem}.inb b{display:block;color:var(--g2)}.inb small{color:var(--mut)}
 </style></head><body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#d4af37"/></linearGradient><symbol id="lg" viewBox="0 0 9 9"><rect x="0.3" y="2.3" width=".4" height=".4" fill="#d4af37" opacity=".55"/><rect x="8.3" y="5.3" width=".4" height=".4" fill="#d4af37" opacity=".55"/><rect x="7.3" y="8.3" width=".4" height=".4" fill="#d4af37" opacity=".55"/><rect x="0.3" y="7.3" width=".4" height=".4" fill="#d4af37" opacity=".55"/><rect x="2" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="3" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="4" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="5" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="2" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="6" y="2" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="3" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="6" y="3" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="3" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="4" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="5" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="5" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="6" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="7" width="1" height="1" rx=".08" fill="url(#pg)"/></symbol></defs></svg><div id="wl"><svg viewBox="0 0 9 9"><use href="#lg"/></svg><h2>مرحباً بكم</h2><p>في بكسل ستور</p></div>
 <header><svg class="lg" viewBox="0 0 9 9"><use href="#lg"/></svg><h1 id="ht">بكسل ستور</h1><button class="bk" id="bk" aria-label="رجوع">→</button></header>
 <main id="v"></main>
@@ -83,14 +84,14 @@ function render(){
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===(view==="cat"?"cats":view)));
  $("#bk").style.display=view==="cat"?"block":"none";$("#ht").textContent=view==="cat"?cats()[cat]||BRAND:BRAND;
  let h="";
- if(view==="home"){const cs=cats();h=`<section class="hero"><div><small class="wl">مرحباً بكم في</small><h2>${BRAND}</h2><p>أفضل الحاسبات والإكسسوارات بأسعار تناسبك</p><ul><li>توصيل لجميع المحافظات</li><li>اطلب بسهولة عبر واتساب</li></ul></div><svg class="hl" viewBox="0 0 9 9"><use href="#lg"/></svg></section>
+ if(view==="home"){const cs=cats();h=`${STANDALONE?"":`<button class="inb" data-inst><i>📲</i><span><b>ثبّت التطبيق على جهازك</b><small>تفتحه من الشاشة الرئيسية مثل أي تطبيق</small></span></button>`}<section class="hero"><div><small class="wl">مرحباً بكم في</small><h2>${BRAND}</h2><p>أفضل الحاسبات والإكسسوارات بأسعار تناسبك</p><ul><li>توصيل لجميع المحافظات</li><li>اطلب بسهولة عبر واتساب</li></ul></div><svg class="hl" viewBox="0 0 9 9"><use href="#lg"/></svg></section>
  <div class="hs" style="margin-top:14px"><div class="perk"><i>🚚</i><div><b>توصيل لجميع المحافظات</b><small>بسعر ثابت ${nf(DELIVERY)} د.ع</small></div></div><div class="perk"><i>💬</i><div><b>اطلب عبر واتساب</b><small>رد سريع على طلبك</small></div></div></div>
  <div class="sh"><h3>التصنيفات الرئيسية</h3><button data-v="cats">عرض الكل ‹</button></div><div class="cg">${cs.map((c,i)=>`<button class="ct" data-cat="${i}"><i>${ci(c)}</i>${esc(c)}</button>`).join("")}</div>
  <div class="sh"><h3>أحدث المنتجات</h3><button data-v="cats">المزيد ‹</button></div><div class="hs">${[...P].sort((a,b)=>b.id-a.id).slice(0,8).map(card).join("")}</div>`;}
  else if(view==="cats"){h=`<div class="sh" style="margin-top:4px"><h3>التصنيفات الرئيسية</h3></div><div class="cc">${cats().map((c,i)=>`<button data-cat="${i}"><i>${ci(c)}</i><b>${esc(c)}</b><small>${P.filter(p=>p.c===c).length} منتج</small></button>`).join("")}</div>`;}
  else if(view==="cat"){h=`<div class="pg">${P.filter(p=>p.c===cats()[cat]).map(card).join("")}</div>`;}
  else if(view==="cart")h=cartView();
- else h=`<div class="sh" style="margin-top:4px"><h3>تواصل معنا</h3></div><a class="cl" href="https://wa.me/${WHATSAPP}" target="_blank" rel="noopener"><i>💬</i><div><b>واتساب</b><small dir="ltr">+${WHATSAPP}</small></div></a><div class="sh"><h3>كيف تطلب؟</h3></div><div class="row"><div class="in"><b>١ اختر منتجاتك وأضفها للسلة</b><b>٢ عبّي اسمك وعنوانك في السلة</b><b>٣ أرسل الطلب عبر واتساب وننسّق معك التوصيل</b><small>التوصيل ${nf(DELIVERY)} د.ع لكل المحافظات</small></div></div>`;
+ else h=`<div class="sh" style="margin-top:4px"><h3>تواصل معنا</h3></div><a class="cl" href="https://wa.me/${WHATSAPP}" target="_blank" rel="noopener"><i>💬</i><div><b>واتساب</b><small dir="ltr">+${WHATSAPP}</small></div></a>${STANDALONE?"":`<button class="cl" data-inst style="width:100%;text-align:right"><i style="background:rgba(212,175,55,.15)">📲</i><div><b>ثبّت التطبيق</b><small>أضفه لشاشتك الرئيسية</small></div></button>`}<div class="sh"><h3>كيف تطلب؟</h3></div><div class="row"><div class="in"><b>١ اختر منتجاتك وأضفها للسلة</b><b>٢ عبّي اسمك وعنوانك في السلة</b><b>٣ أرسل الطلب عبر واتساب وننسّق معك التوصيل</b><small>التوصيل ${nf(DELIVERY)} د.ع لكل المحافظات</small></div></div>`;
  $("#v").innerHTML=`<div class="v">${h}</div>`;
 }
 const PROV=["بغداد","البصرة","نينوى","أربيل","النجف","كربلاء","السليمانية","الأنبار","ديالى","كركوك","ذي قار","بابل","صلاح الدين","واسط","ميسان","القادسية","المثنى","دهوك","حلبجة"];
@@ -99,11 +100,11 @@ function cartView(){const t=tot();if(!t.it.length)return`<div class="emp"><b>�
  return t.it.map(({x,q})=>`<div class="row"><div class="th">${x.img?`<img src="${esc(x.img)}" alt="">`:EM(x.e)}</div><div class="in"><b>${esc(x.n)}</b><small>${nf(x.p*q)} د.ع</small></div><div class="q"><button data-q="${x.id}" data-d="-1">−</button><b>${q}</b><button data-q="${x.id}" data-d="1">+</button></div></div>`).join("")+
  `<div class="tot"><div><span>المجموع</span><span>${nf(t.sub)} د.ع</span></div><div><span>التوصيل</span><span>${nf(t.del)} د.ع</span></div><div class="t"><span>الإجمالي</span><span>${nf(t.total)} د.ع</span></div></div>
  <input id="name" placeholder="الاسم" autocomplete="name"><input id="phone" placeholder="رقم الهاتف" inputmode="tel" autocomplete="tel"><select id="prov">${PROV.map(p=>`<option>${p}</option>`).join("")}</select><input id="addr" placeholder="المنطقة / العنوان"><textarea id="note" rows="2" placeholder="ملاحظات (اختياري)"></textarea><input class="hp" id="hp" tabindex="-1" autocomplete="off"><div class="err" id="err"></div><a class="send" id="send" target="_blank" rel="noopener">إرسال الطلب عبر واتساب 💬</a>`;}
-document.addEventListener("click",e=>{const t=e.target.closest("[data-add],[data-q],[data-v],[data-cat],#bk,#send");if(!t)return;
+document.addEventListener("click",e=>{const t=e.target.closest("[data-add],[data-q],[data-v],[data-cat],[data-inst],#bk,#send");if(!t)return;
  if(t.dataset.add){cart[t.dataset.add]=(cart[t.dataset.add]||0)+1;save();render0();toast("تمت الإضافة للسلة ✓");}
  else if(t.dataset.q){const id=t.dataset.q,n=(cart[id]||0)+ +t.dataset.d;n>0?cart[id]=n:delete cart[id];save();render();}
  else if(t.dataset.v)go(t.dataset.v);else if(t.dataset.cat!=null)go("cat",+t.dataset.cat);
- else if(t.id==="bk")go("cats");else if(t.id==="send")send(e,t);});
+ else if(t.id==="bk")go("cats");else if(t.id==="send")send(e,t);else if(t.dataset.inst!=null)inst();});
 function render0(){const n=count();$("#cn").hidden=!n;$("#cn").textContent=n;}
 function send(e,a){if($("#hp").value){e.preventDefault();return;}const t=tot(),ph=$("#phone").value.replace(/\s/g,"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));let err="";
  const last=+(localStorage.getItem("last")||0);
@@ -119,6 +120,14 @@ function apply(d){if(d&&d.P){P=typeof d.P==="string"?JSON.parse(d.P):d.P;if(d.DE
 fetch("store-data.json").then(r=>r.json()).then(d=>{apply(d);render();}).catch(()=>render()).finally(()=>{
  try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();db.doc("store/main").onSnapshot(s=>{if(s.exists){try{apply(s.data());if(!document.activeElement||!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))render();}catch(e){}}},()=>{});}catch(e){}});
 (function(){for(let i=0;i<(innerWidth<600?7:12);i++){const s=document.createElement("i"),z=3+Math.random()*5;s.className="sp";s.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*100-50}px;animation-duration:${9+Math.random()*9}s;animation-delay:${-Math.random()*14}s`;document.body.appendChild(s);}})();
+const STANDALONE=matchMedia("(display-mode:standalone)").matches||navigator.standalone===true;let dip=null;
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;});
+addEventListener("appinstalled",()=>{dip=null;document.querySelectorAll("[data-inst],#inst").forEach(x=>x.remove());});
+function how(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),s=document.createElement("div");
+ s.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:flex-end";
+ s.innerHTML=`<div style="background:#17130a;border:1px solid rgba(212,175,55,.3);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;color:#fbf6e9;font-family:inherit;line-height:1.8"><b style="font-size:1.15rem;color:#f0d36b">طريقة التثبيت</b><p style="margin:8px 0 14px">${ios?"اضغط زر المشاركة ⬆️ بالأسفل، ثم اختر «إضافة إلى الشاشة الرئيسية».":"افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».<br>وإذا فتحت الرابط من داخل واتساب أو تلگرام، افتحه أولاً بمتصفح كروم."}</p><button style="width:100%;padding:12px;border-radius:12px;font:inherit;font-weight:800;background:linear-gradient(135deg,#f5d76e,#d4af37);color:#1a1200;border:0">تمام</button></div>`;
+ s.onclick=e=>{if(e.target===s||e.target.tagName==="BUTTON")s.remove();};document.body.appendChild(s);}
+async function inst(){if(dip){dip.prompt();try{const r=await dip.userChoice;if(r.outcome==="accepted")dip=null;}catch(e){}return;}how();}
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 (function(){const w=$("#wl");try{if(sessionStorage.getItem("w"))return w.remove();sessionStorage.setItem("w","1")}catch(e){}setTimeout(()=>{w.classList.add("off");setTimeout(()=>w.remove(),700)},1800);})();
 render();
