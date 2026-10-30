@@ -1,6 +1,6 @@
 {
- "name": "متجر الريحان",
- "short_name": "الريحان",
+ "name": "بكسل ستور",
+ "short_name": "بكسل ستور",
  "description": "حاسبات وكيبوردات وموسات أصلية بتوصيل لكل المحافظات",
  "lang": "ar",
  "dir": "rtl",
@@ -9,7 +9,7 @@
  "display": "standalone",
  "orientation": "portrait",
  "background_color": "#0b0905",
- "theme_color": "#d4af37",
+ "theme_color": "#0b0905",
  "icons": [
   {
    "src": "icon-192.png",
