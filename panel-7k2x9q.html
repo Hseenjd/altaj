@@ -13,7 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-:root{--bg:#0a0720;--s1:rgba(26,19,66,.82);--s2:rgba(52,38,112,.55);--line:rgba(140,120,255,.3);--ink:#f6f1ff;--muted:#b9acf0;--gold:#ff5db1;--gold2:#ffc6e4;--em:#7a5cff;--red:#ff4d7a;color-scheme:dark}
+:root{--bg:#0b0905;--s1:rgba(24,20,10,.82);--s2:rgba(48,38,14,.55);--line:rgba(212,175,55,.3);--ink:#fbf6e9;--muted:#cdbd8a;--gold:#d4af37;--gold2:#f0dc8a;--em:#b8860b;--red:#e8c24a;color-scheme:dark}
 [hidden]{display:none!important}
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.6;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -61,15 +61,16 @@ h2{font-size:1.1rem;margin:18px 0 8px}
 @keyframes aurora{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 #stars{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 120px 80px,#cfe,transparent),radial-gradient(2px 2px at 220px 150px,#fff,transparent),radial-gradient(1px 1px at 300px 40px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 190px,#ffd,transparent);background-size:320px 220px;animation:twk 4s ease-in-out infinite alternate;opacity:.8}
 @keyframes twk{from{opacity:.35}to{opacity:.95}}
-.petal{position:fixed;top:-30px;z-index:2;pointer-events:none;background:radial-gradient(circle at 30% 30%,#ffd1e8,#ff8fc7);border-radius:100% 0 100% 0;opacity:.85;animation:fall linear infinite}
-@keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(720deg)}}
-body{background:linear-gradient(120deg,#0a0720,#1b1055,#3a1366,#0e2a5a,#0a0720);background-size:400% 400%;background-attachment:fixed;animation:aurora 22s ease infinite}
-header,.tabs{background:rgba(14,10,40,.88)!important;backdrop-filter:blur(10px)}
-.card,.st,.pc,.ord{backdrop-filter:blur(10px)}.box{background:#150f3d}
-.btn.g{background:linear-gradient(135deg,#ff5db1,#7a5cff);color:#fff}
-.tab.on,.pchip.on{background:linear-gradient(135deg,#ff5db1,#7a5cff);color:#fff;border-color:transparent}
-.pc:hover,.card:hover{border-color:#ff5db1;box-shadow:0 0 0 1px #ff5db1,0 10px 28px rgba(255,93,177,.3)}
-header b,.card h1{background:linear-gradient(90deg,#ffc6e4,#29d8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.petal{position:fixed;top:auto;bottom:-24px;z-index:2;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#fffbe0 0%,#f5d76e 38%,rgba(212,175,55,0) 72%);box-shadow:0 0 8px 2px rgba(245,215,110,.55);opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translate3d(0,0,0) scale(.6);opacity:0}10%{opacity:.95}45%{opacity:.45}75%{opacity:.9}100%{transform:translate3d(var(--dx),-110vh,0) scale(1.15);opacity:0}}
+@media (prefers-reduced-motion:reduce){.petal{display:none}}
+body{background:linear-gradient(120deg,#0b0905,#17130a,#3a2e10,#2b2208,#0b0905);background-size:400% 400%;background-attachment:fixed;animation:aurora 22s ease infinite}
+header,.tabs{background:rgba(10,8,4,.88)!important;backdrop-filter:blur(10px)}
+.card,.st,.pc,.ord{backdrop-filter:blur(10px)}.box{background:#14100a}
+.btn.g{background:linear-gradient(135deg,#d4af37,#b8860b);color:#fff}
+.tab.on,.pchip.on{background:linear-gradient(135deg,#d4af37,#b8860b);color:#fff;border-color:transparent}
+.pc:hover,.card:hover{border-color:#d4af37;box-shadow:0 0 0 1px #d4af37,0 10px 28px rgba(212,175,55,.3)}
+header b,.card h1{background:linear-gradient(90deg,#f0dc8a,#f0d36b);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lg{position:relative}.petal{z-index:-1;opacity:.55}
 </style>
 </head>
@@ -77,7 +78,7 @@ header b,.card h1{background:linear-gradient(90deg,#ffc6e4,#29d8ff);-webkit-back
 <div id="stars"></div>
 <div class="lg" id="login">
   <div class="card">
-    <h1>🌿 لوحة إدارة الريحان</h1>
+    <h1>💎 لوحة إدارة الريحان</h1>
     <p style="color:var(--muted)">سجّل دخول لإدارة المتجر</p>
     <label for="lu" id="lul">اسم المستخدم</label><input id="lu" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" dir="ltr" style="text-align:left">
     <label for="lp">كلمة المرور</label><input id="lp" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" dir="ltr" style="text-align:left">
@@ -88,7 +89,7 @@ header b,.card h1{background:linear-gradient(90deg,#ffc6e4,#29d8ff);-webkit-back
 </div>
 
 <div id="app" hidden>
-  <header><b>🌿 لوحة الإدارة</b><div><a href="index.html" target="_blank" rel="noopener">🛍️ المتجر</a><button class="btn s" id="out">خروج</button></div></header>
+  <header><b>💎 لوحة الإدارة</b><div><a href="index.html" target="_blank" rel="noopener">🛍️ المتجر</a><button class="btn s" id="out">خروج</button></div></header>
   <nav class="tabs" id="tabs" aria-label="أقسام اللوحة"></nav>
   <main id="view"></main>
 </div>
@@ -289,7 +290,7 @@ function doLogout(){
 }
 let lastAct=Date.now();["click","keydown","touchstart"].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now();}));
 setInterval(()=>{if(admin&&Date.now()-lastAct>1800000){doLogout();$("lerr").textContent="انتهت الجلسة بسبب عدم النشاط. سجّل دخول من جديد.";}},30000);
-(function(){const n=innerWidth<600?10:18;for(let i=0;i<n;i++){const p=document.createElement("i"),z=8+Math.random()*10;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z*.85}px;--dx:${Math.random()*160-80}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*15}s`;document.body.appendChild(p);}})();
+(function(){const n=innerWidth<600?14:26;for(let i=0;i<n;i++){const p=document.createElement("i"),z=3+Math.random()*5;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*120-60}px;animation-duration:${8+Math.random()*10}s;animation-delay:${-Math.random()*16}s`;document.body.appendChild(p);}})();
 (async()=>{
   if(FB&&window.firebase){
     firebase.initializeApp(FB);db=firebase.firestore();auth=firebase.auth();$("lul").textContent="البريد الإلكتروني";$("lu").placeholder="you@example.com";
