@@ -15,10 +15,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap">
 <style>
-:root{--bg:#fbfaf5;--s1:#ffffff;--s2:#f0f3ee;--line:#e2e7de;--ink:#10231c;--muted:#5d6f66;--gold:#c9a227;--gold2:#8a6a0a;--vio:#0f6b4f;--green:#1fb55a;--hdr:rgba(251,250,245,.88);--inv:#10231c;--oninv:#fff;--shadow:0 10px 28px rgba(16,60,40,.10);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#0a0720;--s1:rgba(26,19,66,.72);--s2:rgba(52,38,112,.55);--line:rgba(140,120,255,.28);--ink:#f6f1ff;--muted:#b9acf0;--gold:#ff5db1;--gold2:#ffc6e4;--vio:#29d8ff;--green:#1fb55a;--hdr:rgba(14,10,40,.72);--inv:#f6f1ff;--oninv:#1a1040;--shadow:0 10px 30px rgba(120,80,255,.25);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:calc(70px + env(safe-area-inset-top,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
-:root[data-theme="dark"]{--bg:#07120d;--s1:#0d1d16;--s2:#13291f;--line:#23402f;--ink:#f1f7f3;--muted:#98b0a5;--gold:#e0b83a;--gold2:#f3d77a;--hdr:rgba(7,18,13,.82);--inv:#f1f7f3;--oninv:#07120d;--shadow:none;color-scheme:dark}
+:root[data-theme="dark"]{}
 :root[data-theme="dark"] .glow{background:radial-gradient(600px 400px at 85% -5%,rgba(15,138,95,.35),transparent),radial-gradient(500px 400px at 5% 30%,rgba(224,184,58,.12),transparent)}
 .tg{background:var(--s2);border:1px solid var(--line);width:38px;height:38px;border-radius:50%;font-size:1.05rem}
 .card,.perk{box-shadow:var(--shadow)}
@@ -114,6 +114,31 @@ footer.ft{background:var(--s1);border-top:1px solid var(--line);padding:32px 20p
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .tile{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center;box-shadow:var(--shadow);transition:transform .2s,border-color .2s}
 .tile:hover{transform:translateY(-4px);border-color:var(--gold)}.tile *{pointer-events:none}.tile svg{width:100%;height:70px}.tile b{display:block}.tile small{color:var(--muted)}
+@keyframes aurora{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+#stars{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 120px 80px,#cfe,transparent),radial-gradient(2px 2px at 220px 150px,#fff,transparent),radial-gradient(1px 1px at 300px 40px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 190px,#ffd,transparent);background-size:320px 220px;animation:twk 4s ease-in-out infinite alternate;opacity:.8}
+@keyframes twk{from{opacity:.35}to{opacity:.95}}
+.petal{position:fixed;top:-30px;z-index:2;pointer-events:none;background:radial-gradient(circle at 30% 30%,#ffd1e8,#ff8fc7);border-radius:100% 0 100% 0;opacity:.85;animation:fall linear infinite}
+@keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(720deg)}}
+body{background:linear-gradient(120deg,#0a0720,#1b1055,#3a1366,#0e2a5a,#0a0720);background-size:400% 400%;background-attachment:fixed;animation:aurora 22s ease infinite}
+.glow{display:none}
+:root[data-theme="light"]{--bg:#fff4fa;--s1:rgba(255,255,255,.8);--s2:#f3ebff;--line:#e6d6ff;--ink:#2a1a55;--muted:#6f5ea8;--gold:#ff4fa3;--gold2:#b3126a;--vio:#7a5cff;--hdr:rgba(255,244,250,.8);--inv:#2a1a55;--oninv:#fff;--shadow:0 10px 28px rgba(160,90,255,.15);color-scheme:light}
+:root[data-theme="light"] body{background:linear-gradient(120deg,#ffe3f3,#e7dcff,#d6f3ff,#ffe3f3);background-size:400% 400%;background-attachment:fixed}
+:root[data-theme="light"] #stars{display:none}
+aside,.box{background:#150f3d;color:#f6f1ff}:root[data-theme="light"] aside,:root[data-theme="light"] .box{background:#fff;color:#2a1a55}
+.card,.perk,.tile,.st,.pc,.ord,footer.ft{backdrop-filter:blur(10px)}
+.card:hover,.tile:hover{border-color:#ff5db1;box-shadow:0 0 0 1px #ff5db1,0 12px 32px rgba(255,93,177,.35)}
+.topbar{background:linear-gradient(90deg,#7a5cff,#ff5db1,#29d8ff);color:#fff;font-weight:600}
+.cartbtn{background:linear-gradient(135deg,#ff5db1,#7a5cff);color:#fff}
+.badge{background:linear-gradient(90deg,#ff4fa3,#7a5cff);color:#fff}
+.logo{filter:drop-shadow(0 0 10px rgba(255,93,177,.6))}
+.h2in{position:relative;background:linear-gradient(135deg,#2a0f66,#7a2bb8,#ff5db1,#29d8ff);background-size:300% 300%;animation:aurora 14s ease infinite;box-shadow:0 20px 60px rgba(122,92,255,.35)}
+.h2t,.h2v{position:relative;z-index:1}
+.h2t h1,.h2t p,.h2s small{text-shadow:0 2px 14px rgba(40,10,90,.65)}.h2t h1 span{color:#ffd1ea;text-shadow:0 0 18px #ff5db1}.h2s b{color:#ffd1ea}
+.scene{position:absolute;inset:0;width:100%;height:100%;opacity:.75;z-index:0;pointer-events:none}
+.moon{transform-box:fill-box;transform-origin:center;animation:pulse 5s ease-in-out infinite}@keyframes pulse{50%{transform:scale(1.08)}}
+.m2{animation:drift 12s ease-in-out infinite alternate}@keyframes drift{to{transform:translateX(-30px)}}
+.splash{background:linear-gradient(135deg,#1a0b4d,#6a2bb8,#ff5db1,#29d8ff);background-size:300% 300%;animation:aurora 10s ease infinite,spOut .6s ease 4.2s forwards}
+.sec-t::after{background:linear-gradient(90deg,#ff5db1,#29d8ff,transparent)}
 .soc{display:flex;gap:6px;margin-top:6px}
 .soc button{background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:.8rem}
 .rvc{border-bottom:1px solid var(--line);padding:8px 0}.rvc p{margin:2px 0;color:var(--muted)}
@@ -183,8 +208,9 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+<div id="stars"></div>
 <script>try{if(sessionStorage.getItem("taj_sp")||/^#p-/.test(location.hash))document.documentElement.classList.add("nosp");}catch(e){}</script>
-<div class="splash" id="splash" role="dialog" aria-label="ترحيب"><div class="sp-in"><div class="sp-logo">🌿</div><h1>مرحباً بك في <span>متجر الريحان</span></h1><p>أجهزة وإكسسوارات أصلية بتوصيل لكل المحافظات</p><button class="sp-go" id="spgo">ادخل المتجر</button><div class="sp-bar"><i></i></div></div></div>
+<div class="splash" id="splash" role="dialog" aria-label="ترحيب"><div class="sp-in"><div class="sp-logo">🌸</div><h1>مرحباً بك في <span>متجر الريحان</span></h1><p>أجهزة وإكسسوارات أصلية بتوصيل لكل المحافظات</p><button class="sp-go" id="spgo">ادخل المتجر</button><div class="sp-bar"><i></i></div></div></div>
 <div class="glow"></div>
 <div class="topbar">🚚 توصيل لكل المحافظات · 🛡️ ضمان على الأجهزة · 💬 اطلب عبر واتساب بدون تسجيل</div>
 <header>
@@ -198,7 +224,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 </header>
 <section class="ads" id="ads" aria-label="العروض والإعلانات" aria-roledescription="carousel"></section>
 
-<section class="hero2"><div class="h2in"><div class="h2t"><span class="eyebrow">🌿 متجر الريحان للأجهزة</span><h1>أجهزة فاخرة <span>بمستوى الشركات</span></h1><p>حاسبات ولابتوبات وكيبوردات وموسات أصلية. اختر منتجك وسلّم طلبك بنقرة واحدة على واتساب.</p><div class="h2b"><a class="cta" href="#shop">تسوّق الآن</a><a class="cta o" id="hwa" href="#" target="_blank" rel="noopener">💬 كلّمنا</a></div><div class="h2s"><div><b id="sN">0</b><small>منتج</small></div><div><b id="sC">0</b><small>أقسام</small></div><div><b id="sD">0</b><small>د.ع توصيل</small></div></div></div><div class="h2v" id="hv" aria-hidden="true"></div></div></section>
+<section class="hero2"><div class="h2in"><svg class="scene" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><radialGradient id="mg"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#ffd1ea"/><stop offset="1" stop-color="#ff5db1" stop-opacity="0"/></radialGradient><linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a1a7a"/><stop offset="1" stop-color="#150a40"/></linearGradient></defs><circle class="moon" cx="930" cy="120" r="150" fill="url(#mg)"/><circle cx="930" cy="120" r="62" fill="#fff6fb"/><path class="m2" d="M0 330 L120 250 L220 310 L340 220 L470 320 L600 240 L740 330 L880 250 L1010 320 L1200 230 L1200 420 L0 420Z" fill="#2a1466" opacity=".8"/><path d="M0 370 L140 310 L260 360 L400 290 L540 365 L700 300 L850 370 L1000 305 L1200 360 L1200 420 L0 420Z" fill="url(#m1)"/><g fill="none" stroke="#ff5db1" stroke-width="10" stroke-linecap="round"><path d="M240 360 V250 M340 360 V250"/><path d="M215 250 H365 M228 275 H352"/></g><g fill="#ffb3de"><circle cx="1080" cy="40" r="9"/><circle cx="1110" cy="62" r="7"/><circle cx="1050" cy="70" r="6"/><circle cx="700" cy="60" r="5"/></g></svg><div class="h2t"><span class="eyebrow">🌿 متجر الريحان للأجهزة</span><h1>أجهزة فاخرة <span>بمستوى الشركات</span></h1><p>حاسبات ولابتوبات وكيبوردات وموسات أصلية. اختر منتجك وسلّم طلبك بنقرة واحدة على واتساب.</p><div class="h2b"><a class="cta" href="#shop">تسوّق الآن</a><a class="cta o" id="hwa" href="#" target="_blank" rel="noopener">💬 كلّمنا</a></div><div class="h2s"><div><b id="sN">0</b><small>منتج</small></div><div><b id="sC">0</b><small>أقسام</small></div><div><b id="sD">0</b><small>د.ع توصيل</small></div></div></div><div class="h2v" id="hv" aria-hidden="true"></div></div></section>
 
 <section class="perks">
   <div class="perk"><b>🚚</b><div>توصيل سريع<small>لكل المحافظات</small></div></div>
@@ -252,7 +278,7 @@ footer{text-align:center;color:var(--muted);padding:26px;border-top:1px solid va
 <aside id="menu" aria-label="القائمة الرئيسية" aria-hidden="true">
   <div class="dh"><span>القائمة الرئيسية</span><button class="x" id="mclose" aria-label="إغلاق">✕</button></div>
   <div class="body">
-    <button class="mi" id="tg">🌙 <span id="tgt">الوضع الليلي</span></button>
+    <button class="mi" id="tg">🌸 <span id="tgt">الوضع الفاتح</span></button>
     <button class="mi" id="inst" hidden>📲 تثبيت التطبيق</button>
     <button class="mi" id="devbtn" hidden>🛠️ دخول المطورين</button>
     <button class="mi" id="exit" hidden>🚪 تسجيل خروج المطور</button>
@@ -292,26 +318,26 @@ const P = [
   {id:8,n:"موس لاسلكي",c:"موسات",p:15000,e:"mousew",b:"الأكثر طلباً"},
   {id:9,n:"موس ألعاب 7 أزرار",c:"موسات",p:32000,o:38000,e:"mouseg",b:"خصم"}
 ];
-const D='<defs><linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ccf91"/><stop offset="1" stop-color="#0b4a35"/></linearGradient><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f4a40"/><stop offset="1" stop-color="#0c1f18"/></linearGradient></defs>';
+const D='<defs><linearGradient id="gv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a5cff"/><stop offset="1" stop-color="#2a1a6b"/></linearGradient><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2f7a"/><stop offset="1" stop-color="#120d33"/></linearGradient></defs>';
 const svg=b=>`<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${D}${b}</svg>`;
-function keyRows(){let k="";for(let r=0;r<4;r++)for(let c=0;c<14;c++){if(r===3&&c>3&&c<11){if(c===4)k+=`<rect x="${50+0}" y="${50+r*14}" width="74" height="10" rx="2.5" fill="#6b8a7c"/>`;continue;}k+=`<rect x="${20+c*11.4}" y="${50+r*14}" width="9.6" height="10" rx="2.5" fill="${r===0?"#f5c542":"#6b8a7c"}"/>`;}return k;}
+function keyRows(){let k="";for(let r=0;r<4;r++)for(let c=0;c<14;c++){if(r===3&&c>3&&c<11){if(c===4)k+=`<rect x="${50+0}" y="${50+r*14}" width="74" height="10" rx="2.5" fill="#8d7fe0"/>`;continue;}k+=`<rect x="${20+c*11.4}" y="${50+r*14}" width="9.6" height="10" rx="2.5" fill="${r===0?"#ffb3de":"#8d7fe0"}"/>`;}return k;}
 const ICON={
- pc:svg('<rect x="20" y="14" width="104" height="70" rx="6" fill="url(#gg)" stroke="#6b8a7c" stroke-width="2"/><rect x="27" y="21" width="90" height="56" rx="3" fill="url(#gv)"/><path d="M45 62l18-22 14 14 10-8 12 16z" fill="#f5c542" opacity=".85"/><rect x="66" y="84" width="12" height="14" fill="#2f4a40"/><rect x="48" y="98" width="48" height="6" rx="3" fill="#6b8a7c"/><rect x="138" y="26" width="42" height="84" rx="6" fill="url(#gg)" stroke="#6b8a7c" stroke-width="2"/><circle cx="159" cy="44" r="8" fill="none" stroke="#f5c542" stroke-width="2.5"/><rect x="148" y="66" width="22" height="3" rx="1.5" fill="#6b8a7c"/><rect x="148" y="74" width="22" height="3" rx="1.5" fill="#6b8a7c"/><circle cx="159" cy="98" r="3" fill="#f5c542"/>'),
- laptop:svg('<path d="M48 20h104a6 6 0 0 1 6 6v68H42V26a6 6 0 0 1 6-6z" fill="url(#gg)" stroke="#6b8a7c" stroke-width="2"/><rect x="50" y="28" width="100" height="58" rx="3" fill="url(#gv)"/><path d="M68 76l22-26 16 16 12-10 16 20z" fill="#f5c542" opacity=".85"/><path d="M26 98h148l-8 14a6 6 0 0 1-5 3H39a6 6 0 0 1-5-3z" fill="#2f4a40" stroke="#6b8a7c" stroke-width="2"/><rect x="84" y="102" width="32" height="4" rx="2" fill="#0c1f18"/>'),
- kb:svg('<rect x="10" y="36" width="180" height="76" rx="10" fill="url(#gg)" stroke="#6b8a7c" stroke-width="2"/>'+keyRows()),
- mouse:svg('<path d="M100 14c-26 0-40 18-40 44v34c0 22 16 36 40 36s40-14 40-36V58c0-26-14-44-40-44z" fill="url(#gg)" stroke="#6b8a7c" stroke-width="2"/><path d="M100 14v50M60 64h80" stroke="#6b8a7c" stroke-width="2" fill="none"/><rect x="94" y="30" width="12" height="22" rx="6" fill="#f5c542"/><path d="M100 128v10" stroke="#6b8a7c" stroke-width="3"/>')
+ pc:svg('<rect x="20" y="14" width="104" height="70" rx="6" fill="url(#gg)" stroke="#8d7fe0" stroke-width="2"/><rect x="27" y="21" width="90" height="56" rx="3" fill="url(#gv)"/><path d="M45 62l18-22 14 14 10-8 12 16z" fill="#ffb3de" opacity=".85"/><rect x="66" y="84" width="12" height="14" fill="#3b2f7a"/><rect x="48" y="98" width="48" height="6" rx="3" fill="#8d7fe0"/><rect x="138" y="26" width="42" height="84" rx="6" fill="url(#gg)" stroke="#8d7fe0" stroke-width="2"/><circle cx="159" cy="44" r="8" fill="none" stroke="#ffb3de" stroke-width="2.5"/><rect x="148" y="66" width="22" height="3" rx="1.5" fill="#8d7fe0"/><rect x="148" y="74" width="22" height="3" rx="1.5" fill="#8d7fe0"/><circle cx="159" cy="98" r="3" fill="#ffb3de"/>'),
+ laptop:svg('<path d="M48 20h104a6 6 0 0 1 6 6v68H42V26a6 6 0 0 1 6-6z" fill="url(#gg)" stroke="#8d7fe0" stroke-width="2"/><rect x="50" y="28" width="100" height="58" rx="3" fill="url(#gv)"/><path d="M68 76l22-26 16 16 12-10 16 20z" fill="#ffb3de" opacity=".85"/><path d="M26 98h148l-8 14a6 6 0 0 1-5 3H39a6 6 0 0 1-5-3z" fill="#3b2f7a" stroke="#8d7fe0" stroke-width="2"/><rect x="84" y="102" width="32" height="4" rx="2" fill="#120d33"/>'),
+ kb:svg('<rect x="10" y="36" width="180" height="76" rx="10" fill="url(#gg)" stroke="#8d7fe0" stroke-width="2"/>'+keyRows()),
+ mouse:svg('<path d="M100 14c-26 0-40 18-40 44v34c0 22 16 36 40 36s40-14 40-36V58c0-26-14-44-40-44z" fill="url(#gg)" stroke="#8d7fe0" stroke-width="2"/><path d="M100 14v50M60 64h80" stroke="#8d7fe0" stroke-width="2" fill="none"/><rect x="94" y="30" width="12" height="22" rx="6" fill="#ffb3de"/><path d="M100 128v10" stroke="#8d7fe0" stroke-width="3"/>')
 };
 
 function kbd(body,fill,stroke,extra){let k="";for(let r=0;r<4;r++)for(let c=0;c<14;c++){if(r===3&&c>3&&c<11){if(c===4)k+=`<rect x="50" y="${50+r*14}" width="74" height="10" rx="2.5" fill="${fill(r,4)}"/>`;continue;}k+=`<rect x="${20+c*11.4}" y="${50+r*14}" width="9.6" height="10" rx="2.5" fill="${fill(r,c)}"/>`;}return svg(`<rect x="10" y="36" width="180" height="76" rx="10" fill="${body}" stroke="${stroke}" stroke-width="2"/>${k}${extra||""}`);}
-const mse=(extra,top)=>svg(`${top||""}<path d="M100 22c-26 0-40 18-40 44v30c0 22 16 36 40 36s40-14 40-36V66c0-26-14-44-40-44z" fill="url(#gg)" stroke="#6b8a7c" stroke-width="2"/><path d="M100 22v50M60 72h80" stroke="#6b8a7c" stroke-width="2" fill="none"/><rect x="94" y="38" width="12" height="22" rx="6" fill="#f5c542"/>${extra||""}`);
-ICON.kb=kbd("url(#gg)",(r)=>r===0?"#f5c542":"#6b8a7c","#6b8a7c");
-ICON.kbrgb=kbd("#0c1f18",(r,c)=>`hsl(${c*26+r*12},90%,62%)`,"#0f8a5f",'<rect x="10" y="36" width="180" height="76" rx="10" fill="none" stroke="#f5c542" stroke-width="1" opacity=".6"/>');
-const kbh=h=>kbd("#0c1f18",(r,c)=>`hsl(${h+c*3},90%,${55+r*3}%)`,"#6b8a7c");
+const mse=(extra,top)=>svg(`${top||""}<path d="M100 22c-26 0-40 18-40 44v30c0 22 16 36 40 36s40-14 40-36V66c0-26-14-44-40-44z" fill="url(#gg)" stroke="#8d7fe0" stroke-width="2"/><path d="M100 22v50M60 72h80" stroke="#8d7fe0" stroke-width="2" fill="none"/><rect x="94" y="38" width="12" height="22" rx="6" fill="#ffb3de"/>${extra||""}`);
+ICON.kb=kbd("url(#gg)",(r)=>r===0?"#ffb3de":"#8d7fe0","#8d7fe0");
+ICON.kbrgb=kbd("#120d33",(r,c)=>`hsl(${c*26+r*12},90%,62%)`,"#0f8a5f",'<rect x="10" y="36" width="180" height="76" rx="10" fill="none" stroke="#ffb3de" stroke-width="1" opacity=".6"/>');
+const kbh=h=>kbd("#120d33",(r,c)=>`hsl(${h+c*3},90%,${55+r*3}%)`,"#8d7fe0");
 ICON.kbred=kbh(350);ICON.kbblue=kbh(195);ICON.kbgreen=kbh(120);
-ICON.kbw=kbd("#e8f0ea",()=>"#ffffff","#b7cfc3",'<circle cx="176" cy="44" r="3" fill="#0f6b4f"/>');
-ICON.mouse=mse("",'<path d="M100 22c0-14 8-18 14-22" stroke="#6b8a7c" stroke-width="3" fill="none"/>');
-ICON.mousew=mse('<rect x="150" y="112" width="24" height="10" rx="2" fill="#6b8a7c"/><rect x="172" y="114" width="8" height="6" rx="1" fill="#f5c542"/>');
-ICON.mouseg=mse('<rect x="52" y="76" width="9" height="14" rx="3" fill="#f5c542"/><rect x="52" y="94" width="9" height="14" rx="3" fill="#f5c542"/><path d="M62 118c10 18 66 18 76 0" stroke="#ff4d9d" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M60 80c-4 14-4 28 0 40" stroke="#4dd2ff" stroke-width="4" fill="none" stroke-linecap="round"/>');
+ICON.kbw=kbd("#efeaff",()=>"#ffffff","#cfc6ff",'<circle cx="176" cy="44" r="3" fill="#0f6b4f"/>');
+ICON.mouse=mse("",'<path d="M100 22c0-14 8-18 14-22" stroke="#8d7fe0" stroke-width="3" fill="none"/>');
+ICON.mousew=mse('<rect x="150" y="112" width="24" height="10" rx="2" fill="#8d7fe0"/><rect x="172" y="114" width="8" height="6" rx="1" fill="#ffb3de"/>');
+ICON.mouseg=mse('<rect x="52" y="76" width="9" height="14" rx="3" fill="#ffb3de"/><rect x="52" y="94" width="9" height="14" rx="3" fill="#ffb3de"/><path d="M62 118c10 18 66 18 76 0" stroke="#ff4d9d" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M60 80c-4 14-4 28 0 40" stroke="#4dd2ff" stroke-width="4" fill="none" stroke-linecap="round"/>');
 if(!FB)try{const d=JSON.parse(localStorage.getItem("taj_data")||"null");if(d&&d.P){P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;}}catch(e){}
 const ORDER=["حاسبات","كيبوردات","كيبوردات ألعاب","موسات"];
 const oi=c=>{const i=ORDER.indexOf(c);return i<0?99:i};const sortP=()=>P.sort((a,b)=>oi(a.c)-oi(b.c)||a.id-b.id);sortP();
@@ -370,10 +396,10 @@ function buildMsg(t){
 }
 // الإعلانات: عدّل النصوص أو أضف إعلان. c = القسم اللي يفتحه الزر ("الكل" أو اسم قسم). لو عندك صورة إعلان حط img:"images/ad1.jpg"
 const ADS=[
- {t:"خصم على الحاسبة المكتبية Core i5",s:"من 720,000 إلى 650,000 د.ع",b:"شوف العرض",c:"حاسبات",e:"🖥️",g:"linear-gradient(120deg,#06291d,#0f8a5f)"},
- {t:"كيبوردات ألعاب بإضاءة RGB",s:"تبدأ من 35,000 د.ع فقط",b:"تسوّق الآن",c:"كيبوردات ألعاب",e:"⌨️",g:"linear-gradient(120deg,#7a5c08,#c9a227)"},
- {t:"توصيل لكل المحافظات",s:"سعر توصيل ثابت 5,000 د.ع",b:"ابدأ الطلب",c:"الكل",e:"🚚",g:"linear-gradient(120deg,#0f766e,#16a34a)"},
- {t:"موس ألعاب 7 أزرار بسعر أقل",s:"من 38,000 إلى 32,000 د.ع",b:"شوف العرض",c:"موسات",e:"🖱️",g:"linear-gradient(120deg,#6b1d36,#b4455f)"}
+ {t:"خصم على الحاسبة المكتبية Core i5",s:"من 720,000 إلى 650,000 د.ع",b:"شوف العرض",c:"حاسبات",e:"🖥️",g:"linear-gradient(120deg,#2a0f66,#7a5cff)"},
+ {t:"كيبوردات ألعاب بإضاءة RGB",s:"تبدأ من 35,000 د.ع فقط",b:"تسوّق الآن",c:"كيبوردات ألعاب",e:"⌨️",g:"linear-gradient(120deg,#b3126a,#ff5db1)"},
+ {t:"توصيل لكل المحافظات",s:"سعر توصيل ثابت 5,000 د.ع",b:"ابدأ الطلب",c:"الكل",e:"🚚",g:"linear-gradient(120deg,#0a4d7a,#29d8ff)"},
+ {t:"موس ألعاب 7 أزرار بسعر أقل",s:"من 38,000 إلى 32,000 د.ع",b:"شوف العرض",c:"موسات",e:"🖱️",g:"linear-gradient(120deg,#4a1a7a,#ff7ac8)"}
 ];
 let ai=0,adTimer;
 $("ads").innerHTML=ADS.map((a,i)=>`<div class="ad${i?"":" on"}" style="background:${a.img?`url(${a.img}) center/cover`:a.g}"><div><h2>${a.t}</h2><p>${a.s}</p><button class="adbtn" data-ad="${i}">${a.b}</button></div><span class="ade" aria-hidden="true">${a.e||""}</span></div>`).join("")+`<div class="dots">${ADS.map((_,i)=>`<button aria-label="إعلان ${i+1}" class="${i?"":"on"}" data-dot="${i}"></button>`).join("")}</div>`;
@@ -393,7 +419,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.m){if(--cart[t.dataset.m]<=0)delete cart[t.dataset.m];renderCart();}
 });
 $("q").oninput=renderGrid; $("sort").onchange=renderGrid;
-$("tg").onclick=()=>{const d=document.documentElement,dk=d.dataset.theme!=="dark";d.dataset.theme=dk?"dark":"light";$("tgt").textContent=dk?"الوضع النهاري":"الوضع الليلي";};
+$("tg").onclick=()=>{const d=document.documentElement,lt=d.dataset.theme==="light";d.dataset.theme=lt?"dark":"light";$("tgt").textContent=lt?"الوضع الفاتح":"الوضع الليلي";};
 $("open").onclick=()=>drawer(true);
 $("close").onclick=$("shade").onclick=()=>drawer(false);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")drawer(false);});
@@ -594,6 +620,7 @@ setSup();stats();
 if(!FB){fetch("store-data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.P)return;let loc=null;try{loc=localStorage.getItem("taj_data");}catch(e){}if(loc)return;P.length=0;P.push(...d.P);DELIVERY=d.DELIVERY;WHATSAPP=d.WHATSAPP;if(d.COUPONS)COUPONS=d.COUPONS;refresh();}).catch(()=>{});}
 [["name",60],["addr",200],["note",300],["phone",20]].forEach(([i,n])=>$(i).maxLength=n);
 {const sp=$("splash"),cl=()=>sp.classList.add("out");try{if(!sessionStorage.getItem("taj_sp")){sessionStorage.setItem("taj_sp","1");setTimeout(cl,3600);}}catch(e){setTimeout(cl,3600);}$("spgo").onclick=cl;}
+(function(){const n=innerWidth<600?10:18;for(let i=0;i<n;i++){const p=document.createElement("i"),z=8+Math.random()*10;p.className="petal";p.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z*.85}px;--dx:${Math.random()*160-80}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*15}s`;document.body.appendChild(p);}})();
 function deep(){if(deepDone)return;const m=/^#p-(\d+)$/.exec(location.hash);if(m&&P.find(p=>p.id==+m[1])){deepDone=true;openQV(+m[1]);}}
 renderChips();renderGrid();renderCart();badge();deep();
 </script>
