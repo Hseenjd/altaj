@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow"><script>window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__dip=e;});</script><link rel="manifest" href="admin-manifest.json"><meta name="theme-color" content="#0b0905"><link rel="apple-touch-icon" href="admin-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="إدارة بكسل">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><script>window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__dip=e;});</script><link rel="manifest" href="admin-manifest.json"><meta name="theme-color" content="#ffffff"><link rel="apple-touch-icon" href="admin-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="إدارة بكسل">
 <meta name="referrer" content="no-referrer">
 <title>لوحة إدارة متجر بكسل ستور</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
@@ -13,7 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-:root{--bg:#0b0905;--s1:rgba(24,20,10,.82);--s2:rgba(48,38,14,.55);--line:rgba(212,175,55,.3);--ink:#fbf6e9;--muted:#cdbd8a;--gold:#d4af37;--gold2:#f0dc8a;--em:#b8860b;--red:#e8c24a;color-scheme:dark}
+:root{--bg:#f4f7ff;--s1:rgba(255,255,255,.82);--s2:rgba(234,240,255,.55);--line:rgba(37,99,235,.3);--ink:#0f1b3d;--muted:#5b6b94;--gold:#2563eb;--gold2:#1d4ed8;--em:#16a34a;--red:#dc2626;color-scheme:light}
 [hidden]{display:none!important}
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:Cairo,Tahoma,Arial,sans-serif;line-height:1.6;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -22,7 +22,7 @@ button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;bo
 input,select,textarea{width:100%;padding:9px 10px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
 label{display:block;font-weight:600;margin-top:10px;font-size:.92rem}
 .btn{background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:10px;font-weight:700}
-.btn.g{background:linear-gradient(135deg,var(--gold),#e0b83a);color:#1a1200}.btn.s{background:var(--s2);color:var(--ink);border:1px solid var(--line)}.btn.r{background:var(--red);color:#fff}
+.btn.g{background:linear-gradient(135deg,var(--gold),#1d4ed8);color:#ffffff}.btn.s{background:var(--s2);color:var(--ink);border:1px solid var(--line)}.btn.r{background:var(--red);color:#fff}
 .lg{min-height:100vh;display:grid;place-items:center;padding:20px}
 .card{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:20px;width:min(420px,100%)}
 .card h1{font-size:1.4rem;margin-bottom:4px}
@@ -31,7 +31,7 @@ header{position:sticky;top:0;z-index:5;background:var(--s1);border-bottom:1px so
 header a{color:var(--em);text-decoration:none;font-weight:700;margin-inline-end:8px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:var(--s1);border-bottom:1px solid var(--line);position:sticky;top:53px;z-index:4}
 .tab{background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:6px 16px;white-space:nowrap}
-.tab.on{background:var(--gold);color:#1a1200;font-weight:800;border-color:var(--gold)}
+.tab.on{background:var(--gold);color:#ffffff;font-weight:800;border-color:var(--gold)}
 .nb{background:var(--red);color:#fff;border-radius:999px;padding:0 7px;font-size:.75rem}
 main{max-width:900px;margin:0 auto;padding:16px}
 h2{font-size:1.1rem;margin:18px 0 8px}
@@ -46,7 +46,7 @@ h2{font-size:1.1rem;margin:18px 0 8px}
 .pf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.pf label{margin:0;font-weight:600;font-size:.8rem;color:var(--muted)}.pf input{margin-top:2px}
 .tgls{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.tgl{margin:0;display:flex;gap:6px;align-items:center;background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:600;font-size:.88rem;cursor:pointer}.tgl input{width:auto;accent-color:var(--em)}.tgl:has(input:checked){background:var(--em);color:#fff;border-color:var(--em)}
 .acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}.acts button{background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:7px 4px;font-weight:600}.acts .dl{color:var(--red)}
-.pchips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}.pchip{background:var(--s1);border:1px solid var(--line);border-radius:999px;padding:4px 14px;white-space:nowrap}.pchip.on{background:var(--gold);color:#1a1200;font-weight:800;border-color:var(--gold)}
+.pchips{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}.pchip{background:var(--s1);border:1px solid var(--line);border-radius:999px;padding:4px 14px;white-space:nowrap}.pchip.on{background:var(--gold);color:#ffffff;font-weight:800;border-color:var(--gold)}
 .ord{padding:8px 12px;margin-top:8px}.ord summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.ord p{margin:6px 0}
 .row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -61,16 +61,16 @@ h2{font-size:1.1rem;margin:18px 0 8px}
 @keyframes aurora{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 #stars{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 120px 80px,#cfe,transparent),radial-gradient(2px 2px at 220px 150px,#fff,transparent),radial-gradient(1px 1px at 300px 40px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 190px,#ffd,transparent);background-size:320px 220px;animation:twk 4s ease-in-out infinite alternate;opacity:.8}
 @keyframes twk{from{opacity:.35}to{opacity:.95}}
-.petal{position:fixed;top:auto;bottom:-24px;z-index:2;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#fffbe0 0%,#f5d76e 38%,rgba(212,175,55,0) 72%);box-shadow:0 0 8px 2px rgba(245,215,110,.55);opacity:0;animation:rise linear infinite}
+.petal{position:fixed;top:auto;bottom:-24px;z-index:2;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#ffffff 0%,#60a5fa 38%,rgba(37,99,235,0) 72%);box-shadow:0 0 8px 2px rgba(96,165,250,.55);opacity:0;animation:rise linear infinite}
 @keyframes rise{0%{transform:translate3d(0,0,0) scale(.6);opacity:0}10%{opacity:.95}45%{opacity:.45}75%{opacity:.9}100%{transform:translate3d(var(--dx),-110vh,0) scale(1.15);opacity:0}}
 @media (prefers-reduced-motion:reduce){.petal{display:none}}
-body{background:linear-gradient(120deg,#0b0905,#17130a,#3a2e10,#2b2208,#0b0905);background-size:400% 400%;background-attachment:fixed;animation:aurora 22s ease infinite}
-header,.tabs{background:rgba(10,8,4,.88)!important;backdrop-filter:blur(10px)}
-.card,.st,.pc,.ord{backdrop-filter:blur(10px)}.box{background:#14100a}
-.btn.g{background:linear-gradient(135deg,#d4af37,#b8860b);color:#fff}
-.tab.on,.pchip.on{background:linear-gradient(135deg,#d4af37,#b8860b);color:#fff;border-color:transparent}
-.pc:hover,.card:hover{border-color:#d4af37;box-shadow:0 0 0 1px #d4af37,0 10px 28px rgba(212,175,55,.3)}
-header b,.card h1{background:linear-gradient(90deg,#f0dc8a,#f0d36b);-webkit-background-clip:text;background-clip:text;color:transparent}
+body{background:linear-gradient(120deg,#f4f7ff,#ffffff,#dbe5ff,#e3ebff,#f4f7ff);background-size:400% 400%;background-attachment:fixed;animation:aurora 22s ease infinite}
+header,.tabs{background:rgba(255,255,255,.88)!important;backdrop-filter:blur(10px)}
+.card,.st,.pc,.ord{backdrop-filter:blur(10px)}.box{background:#ffffff}
+.btn.g{background:linear-gradient(135deg,#2563eb,#16a34a);color:#fff}
+.tab.on,.pchip.on{background:linear-gradient(135deg,#2563eb,#16a34a);color:#fff;border-color:transparent}
+.pc:hover,.card:hover{border-color:#2563eb;box-shadow:0 0 0 1px #2563eb,0 10px 28px rgba(37,99,235,.3)}
+header b,.card h1{background:linear-gradient(90deg,#1d4ed8,#1d4ed8);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lg{position:relative}.petal{z-index:-1;opacity:.55}
 
 /* ===== تخفيف الحمل: بدون حركات خلفية ثقيلة ===== */
@@ -78,15 +78,26 @@ body{animation:none!important;background-attachment:scroll}
 .h2in{animation:none!important;background-size:100% 100%}
 .splash{animation:spOut .6s ease 4.2s forwards!important;background-size:100% 100%}
 #stars{display:none!important}
-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(10,8,4,.96)!important}
+header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(255,255,255,.96)!important}
 .card,.perk,.tile,.st,.pc,.ord,footer.ft{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-.ade{filter:none!important;text-shadow:0 6px 24px rgba(212,175,55,.35)}
+.ade{filter:none!important;text-shadow:0 6px 24px rgba(37,99,235,.35)}
 .petal{box-shadow:none!important}
 .card{contain:layout paint}
 @media (max-width:700px){.petal:nth-child(n+9){display:none}.adbtn::after{animation:none}.ade{animation:none}.fc{animation:none}}
-.chart{display:flex;gap:8px;height:170px;padding:12px 10px 8px;border:1px solid rgba(212,175,55,.25);border-radius:14px;background:rgba(212,175,55,.04);margin-bottom:12px}
+.chart{display:flex;gap:8px;height:170px;padding:12px 10px 8px;border:1px solid rgba(37,99,235,.25);border-radius:14px;background:rgba(37,99,235,.04);margin-bottom:12px}
 .cb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}.cb b{font-size:.8rem}.cb small{font-size:.68rem;opacity:.7;white-space:nowrap}
-.bw{flex:1;width:100%;display:flex;align-items:flex-end}.bw i{display:block;width:100%;border-radius:6px 6px 0 0;background:linear-gradient(#f5d76e,#b8860b);transition:height .5s}
+.bw{flex:1;width:100%;display:flex;align-items:flex-end}.bw i{display:block;width:100%;border-radius:6px 6px 0 0;background:linear-gradient(#60a5fa,#2563eb);transition:height .5s}
+
+/* منع التكبير والنسخ (واجهة تطبيق) */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+img{-webkit-user-drag:none;-webkit-touch-callout:none}
+.ord,.ord *{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+
+/* ===== ثيم فاتح: أبيض + أزرق ملكي ===== */
+body{background:#f4f7ff!important}
+.st,.row,.ord,.card,.tot{box-shadow:0 4px 14px rgba(30,60,140,.08)}
 </style>
 </head>
 <body>
@@ -336,11 +347,16 @@ addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;});
 addEventListener("appinstalled",()=>{dip=null;document.querySelectorAll("[data-inst],#inst").forEach(x=>x.remove());});
 function how(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),s=document.createElement("div");
  s.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90;display:flex;align-items:flex-end";
- s.innerHTML=`<div style="background:#17130a;border:1px solid rgba(212,175,55,.3);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;color:#fbf6e9;font-family:inherit;line-height:1.8"><b style="font-size:1.15rem;color:#f0d36b">طريقة التثبيت</b><p style="margin:8px 0 14px">${ios?"اضغط زر المشاركة ⬆️ بالأسفل، ثم اختر «إضافة إلى الشاشة الرئيسية».":"افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».<br>وإذا فتحت الرابط من داخل واتساب أو تلگرام، افتحه أولاً بمتصفح كروم."}</p>${ios?"":`<a href="intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end" style="display:block;text-align:center;padding:12px;border-radius:12px;margin-bottom:10px;font-weight:800;color:#f0d36b;border:1px solid rgba(212,175,55,.5);text-decoration:none">فتح الصفحة بمتصفح كروم</a>`}<button style="width:100%;padding:12px;border-radius:12px;font:inherit;font-weight:800;background:linear-gradient(135deg,#f5d76e,#d4af37);color:#1a1200;border:0">تمام</button></div>`;
+ s.innerHTML=`<div style="background:#ffffff;border:1px solid rgba(37,99,235,.3);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;color:#0f1b3d;font-family:inherit;line-height:1.8"><b style="font-size:1.15rem;color:#1d4ed8">طريقة التثبيت</b><p style="margin:8px 0 14px">${ios?"اضغط زر المشاركة ⬆️ بالأسفل، ثم اختر «إضافة إلى الشاشة الرئيسية».":"افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».<br>وإذا فتحت الرابط من داخل واتساب أو تلگرام، افتحه أولاً بمتصفح كروم."}</p>${ios?"":`<a href="intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end" style="display:block;text-align:center;padding:12px;border-radius:12px;margin-bottom:10px;font-weight:800;color:#1d4ed8;border:1px solid rgba(37,99,235,.5);text-decoration:none">فتح الصفحة بمتصفح كروم</a>`}<button style="width:100%;padding:12px;border-radius:12px;font:inherit;font-weight:800;background:linear-gradient(135deg,#60a5fa,#2563eb);color:#ffffff;border:0">تمام</button></div>`;
  s.onclick=e=>{if(e.target===s||e.target.tagName==="BUTTON")s.remove();};document.body.appendChild(s);}
 async function inst(){if(dip){dip.prompt();try{const r=await dip.userChoice;if(r.outcome==="accepted")dip=null;}catch(e){}return;}how();}
 const ib=document.getElementById("inst");if(STANDALONE)ib.remove();else ib.onclick=inst;
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+<script>
+["gesturestart","gesturechange","gestureend"].forEach(function(n){document.addEventListener(n,function(e){e.preventDefault();});});
+document.addEventListener("touchmove",function(e){if(e.touches.length>1)e.preventDefault();},{passive:false});
+document.addEventListener("contextmenu",function(e){if(!e.target.closest("input,textarea,.ord"))e.preventDefault();});
 </script>
 </body>
 </html>

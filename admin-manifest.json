@@ -9,8 +9,8 @@
  "scope": "./panel-7k2x9q.html",
  "display": "standalone",
  "orientation": "portrait",
- "background_color": "#0b0905",
- "theme_color": "#0b0905",
+ "background_color": "#ffffff",
+ "theme_color": "#ffffff",
  "icons": [
   {
    "src": "admin-192.png",
