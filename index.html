@@ -75,9 +75,18 @@ img{-webkit-user-drag:none;-webkit-touch-callout:none}
 .pc,.perk,.row,.tot,.cl,.ct i,.cc i{box-shadow:0 4px 14px rgba(30,60,140,.08)}
 nav{box-shadow:0 -4px 16px rgba(30,60,140,.08)}
 .sp{background:radial-gradient(circle,#fff,#60a5fa 40%,transparent 72%)}
+
+/* ===== ميزات احترافية ===== */
+.sb{max-width:820px;margin:0 auto;padding:10px 16px 0}.sb input{margin:0;border-radius:14px;padding:11px 14px}
+.sbar{display:flex;justify-content:flex-end;margin-bottom:10px}.sbar select{width:auto;margin:0;padding:8px 12px}
+.sheet{position:fixed;inset:0;background:rgba(15,27,61,.5);z-index:90;display:flex;align-items:flex-end;justify-content:center}
+.sc{position:relative;background:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.2);animation:vin .3s both}
+.sc h3{margin:10px 0 2px;font-size:1.15rem}.mt{color:var(--mut)}
+.x{position:absolute;top:10px;inset-inline-start:10px;z-index:2;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.ad[disabled]{cursor:not-allowed;box-shadow:none}
 </style></head><body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/></linearGradient><symbol id="lg" viewBox="0 0 9 9"><rect x="0.3" y="2.3" width=".4" height=".4" fill="#2563eb" opacity=".55"/><rect x="8.3" y="5.3" width=".4" height=".4" fill="#2563eb" opacity=".55"/><rect x="7.3" y="8.3" width=".4" height=".4" fill="#2563eb" opacity=".55"/><rect x="0.3" y="7.3" width=".4" height=".4" fill="#2563eb" opacity=".55"/><rect x="2" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="3" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="4" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="5" y="1" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="2" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="6" y="2" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="3" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="6" y="3" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="3" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="4" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="5" y="4" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="5" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="6" width="1" height="1" rx=".08" fill="url(#pg)"/><rect x="2" y="7" width="1" height="1" rx=".08" fill="url(#pg)"/></symbol></defs></svg><div id="wl"><svg viewBox="0 0 9 9"><use href="#lg"/></svg><h2>مرحباً بكم</h2><p>في بكسل ستور</p></div>
 <header><svg class="lg" viewBox="0 0 9 9"><use href="#lg"/></svg><h1 id="ht">بكسل ستور</h1><button class="bk" id="bk" aria-label="رجوع">→</button></header>
-<main id="v"></main>
+<div class="sb" id="sb"><input id="q" type="search" placeholder="🔍 ابحث عن منتج…" autocomplete="off"></div><main id="v"></main>
 <nav><button data-v="home" class="on"><i>🏠</i>الرئيسية</button><button data-v="cats"><i>▦</i>التصنيفات</button><button data-v="cart"><i>🛒</i>السلة<span class="n" id="cn" hidden>0</span></button><button data-v="contact"><i>📞</i>اتصل بنا</button></nav>
 <div class="toast" id="ts"></div>
 <script src="config.js"></script>
@@ -85,17 +94,26 @@ nav{box-shadow:0 -4px 16px rgba(30,60,140,.08)}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const $=s=>document.querySelector(s),nf=n=>(+n).toLocaleString("en-US"),BRAND="بكسل ستور";
-let P=[],DELIVERY=5000,WHATSAPP="9647771928004",cart={},view="home",cat=null,db=null;
+let P=[],DELIVERY=5000,WHATSAPP="9647771928004",cart={},view="home",cat=null,db=null,COUPONS={},cp="",sq="",sort="new";
 try{cart=JSON.parse(localStorage.getItem("cart")||"{}")}catch(e){}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const CI={"حاسبات":"🖥️","كيبوردات":"⌨️","كيبوردات ألعاب":"🎮","موسات":"🖱️"},TINT={kbred:"#ff4d4d",kbblue:"#4d8dff",kbgreen:"#3ddc84",kbrgb:"#c04dff"};
 const EM=e=>/^kb/.test(e)?"⌨️":/^mouse/.test(e)?"🖱️":e==="laptop"?"💻":"🖥️",cats=()=>[...new Set(P.map(p=>p.c))],ci=c=>CI[c]||"📦";
 const art=p=>p.img?`<img src="${esc(p.img)}" alt="" loading="lazy" decoding="async">`:`<span>${EM(p.e)}</span>`;
-const card=p=>`<article class="pc"><div class="pa" style="--t:${TINT[p.e]||"#2563eb"}">${p.b?`<i class="bd">${esc(p.b)}</i>`:""}${art(p)}</div><div class="pn">${esc(p.n)}</div><div class="pf"><button class="ad" data-add="${p.id}" aria-label="أضف للسلة">+</button><div class="pp"><b>${nf(p.p)} د.ع</b>${p.o?`<s>${nf(p.o)}</s>`:""}</div></div></article>`;
+const oos=p=>p.out||p.st===0,disc=p=>p.o>p.p?Math.round((1-p.p/p.o)*100):0;
+const norm=s=>String(s).toLowerCase().replace(/[\u064B-\u0652]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه");
+const srt=l=>[...l].sort((a,b)=>sort==="lo"?a.p-b.p:sort==="hi"?b.p-a.p:b.id-a.id);
+const sortBar=()=>`<div class="sbar"><select id="so"><option value="new"${sort==="new"?" selected":""}>الأحدث</option><option value="lo"${sort==="lo"?" selected":""}>الأرخص أولاً</option><option value="hi"${sort==="hi"?" selected":""}>الأغلى أولاً</option></select></div>`;
+const card=p=>`<article class="pc"><div class="pa" data-pd="${p.id}" style="--t:${TINT[p.e]||"#2563eb"}">${oos(p)?`<i class="bd" style="background:#475569">نفد</i>`:(p.b||disc(p))?`<i class="bd">${p.b?esc(p.b):"-"+disc(p)+"%"}</i>`:""}${art(p)}</div><div class="pn" data-pd="${p.id}">${esc(p.n)}</div><div class="pf">${oos(p)?`<button class="ad" disabled style="opacity:.35">×</button>`:`<button class="ad" data-add="${p.id}" aria-label="أضف للسلة">+</button>`}<div class="pp"><b>${nf(p.p)} د.ع</b>${p.o?`<s>${nf(p.o)}</s>`:""}</div></div></article>`;
+function addC(id){const x=P.find(p=>p.id==id);if(!x||oos(x)){toast("المنتج غير متوفر");return;}if(typeof x.st==="number"&&(cart[x.id]||0)>=x.st){toast("وصلت لأقصى كمية متوفرة");return;}cart[x.id]=(cart[x.id]||0)+1;save();render0();toast("تمت الإضافة للسلة ✓");}
+function pd(id){const x=P.find(p=>p.id==id);if(!x)return;const s=document.createElement("div");s.className="sheet";
+ s.innerHTML=`<div class="sc"><button class="x" data-x aria-label="إغلاق">✕</button><div class="pa" style="--t:${TINT[x.e]||"#2563eb"};border-radius:16px;aspect-ratio:4/3">${art(x)}</div><h3>${esc(x.n)}</h3><p class="mt">${esc(x.c)}${x.b?` · ${esc(x.b)}`:""}</p><div class="pp" style="margin:8px 0"><b style="font-size:1.4rem">${nf(x.p)} د.ع</b>${x.o?` <s>${nf(x.o)}</s> <i class="bd" style="position:static">-${disc(x)}%</i>`:""}</div>${typeof x.st==="number"&&x.st>0&&x.st<=5?`<p class="err">باقي ${x.st} فقط</p>`:""}${oos(x)?`<p class="err">غير متوفر حالياً</p>`:`<button class="send" data-sadd="${x.id}" style="width:100%">أضف للسلة 🛒</button>`}<a class="cl" style="margin:10px 0 0" target="_blank" rel="noopener" href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("استفسار عن: "+x.n)}"><i>💬</i><div><b>اسأل عن المنتج عبر واتساب</b></div></a></div>`;
+ s.onclick=e=>{const a=e.target.closest("[data-sadd]");if(a){addC(a.dataset.sadd);s.remove();}else if(e.target===s||e.target.closest("[data-x]"))s.remove();};document.body.appendChild(s);}
 const count=()=>Object.values(cart).reduce((a,b)=>a+b,0),save=()=>{try{localStorage.setItem("cart",JSON.stringify(cart))}catch(e){}};
 function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),1800);}
-function go(v,c){view=v;cat=c==null?null:c;render();scrollTo(0,0);}
+function go(v,c,pop){view=v;cat=c==null?null:c;if(v!=="search"){sq="";$("#q").value="";}if(!pop)history.pushState({v:view,c:cat},"");render();scrollTo(0,0);}
 function render(){
+ const fv={};["name","phone","prov","addr","note","cpn"].forEach(i=>{const e=document.getElementById(i);if(e)fv[i]=e.value;});
  const n=count();$("#cn").hidden=!n;$("#cn").textContent=n;
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===(view==="cat"?"cats":view)));
  $("#bk").style.display=view==="cat"?"block":"none";$("#ht").textContent=view==="cat"?cats()[cat]||BRAND:BRAND;
@@ -105,34 +123,38 @@ function render(){
  <div class="sh"><h3>التصنيفات الرئيسية</h3><button data-v="cats">عرض الكل ‹</button></div><div class="cg">${cs.map((c,i)=>`<button class="ct" data-cat="${i}"><i>${ci(c)}</i>${esc(c)}</button>`).join("")}</div>
  <div class="sh"><h3>أحدث المنتجات</h3><button data-v="cats">المزيد ‹</button></div><div class="hs">${[...P].sort((a,b)=>b.id-a.id).slice(0,8).map(card).join("")}</div>`;}
  else if(view==="cats"){h=`<div class="sh" style="margin-top:4px"><h3>التصنيفات الرئيسية</h3></div><div class="cc">${cats().map((c,i)=>`<button data-cat="${i}"><i>${ci(c)}</i><b>${esc(c)}</b><small>${P.filter(p=>p.c===c).length} منتج</small></button>`).join("")}</div>`;}
- else if(view==="cat"){h=`<div class="pg">${P.filter(p=>p.c===cats()[cat]).map(card).join("")}</div>`;}
+ else if(view==="cat"){h=sortBar()+`<div class="pg">${srt(P.filter(p=>p.c===cats()[cat])).map(card).join("")}</div>`;}
+ else if(view==="search"){const q=norm(sq),l=P.filter(p=>norm(p.n+" "+p.c).includes(q));h=sortBar()+(l.length?`<div class="pg">${srt(l).map(card).join("")}</div>`:`<div class="emp"><b>🔍</b>ما لقينا نتيجة لـ «${esc(sq)}»</div>`);}
  else if(view==="cart")h=cartView();
  else h=`<div class="sh" style="margin-top:4px"><h3>تواصل معنا</h3></div><a class="cl" href="https://wa.me/${WHATSAPP}" target="_blank" rel="noopener"><i>💬</i><div><b>واتساب</b><small dir="ltr">+${WHATSAPP}</small></div></a>${STANDALONE?"":`<button class="cl" data-inst style="width:100%;text-align:right"><i style="background:rgba(37,99,235,.15)">📲</i><div><b>ثبّت التطبيق</b><small>أضفه لشاشتك الرئيسية</small></div></button>`}<div class="sh"><h3>كيف تطلب؟</h3></div><div class="row"><div class="in"><b>١ اختر منتجاتك وأضفها للسلة</b><b>٢ عبّي اسمك وعنوانك في السلة</b><b>٣ أرسل الطلب عبر واتساب وننسّق معك التوصيل</b><small>التوصيل ${nf(DELIVERY)} د.ع لكل المحافظات</small></div></div>`;
- $("#v").innerHTML=`<div class="v">${h}</div>`;
+ $("#v").innerHTML=`<div class="v">${h}</div>`;Object.keys(fv).forEach(i=>{const e=document.getElementById(i);if(e)e.value=fv[i];});$("#sb").style.display=(view==="cart"||view==="contact")?"none":"block";
 }
 const PROV=["بغداد","البصرة","نينوى","أربيل","النجف","كربلاء","السليمانية","الأنبار","ديالى","كركوك","ذي قار","بابل","صلاح الدين","واسط","ميسان","القادسية","المثنى","دهوك","حلبجة"];
-const tot=()=>{const it=Object.keys(cart).map(id=>({x:P.find(p=>p.id==id),q:cart[id]})).filter(i=>i.x),sub=it.reduce((a,i)=>a+i.x.p*i.q,0),del=it.length?DELIVERY:0;return{it,sub,del,total:sub+del};};
+const cpPct=()=>cp&&COUPONS[cp]?Math.min(100,+COUPONS[cp]||0):0;
+const tot=()=>{const it=Object.keys(cart).map(id=>({x:P.find(p=>p.id==id),q:cart[id]})).filter(i=>i.x),sub=it.reduce((a,i)=>a+i.x.p*i.q,0),disc=Math.round(sub*cpPct()/100),del=it.length?DELIVERY:0;return{it,sub,disc,del,total:sub-disc+del};};
+const totHTML=()=>{const t=tot();return `<div><span>المجموع</span><span>${nf(t.sub)} د.ع</span></div>${t.disc?`<div><span>خصم ${cpPct()}%</span><span>-${nf(t.disc)} د.ع</span></div>`:""}<div><span>التوصيل</span><span>${nf(t.del)} د.ع</span></div><div class="t"><span>الإجمالي</span><span>${nf(t.total)} د.ع</span></div>`;};
+function applyCp(){const c=$("#cpn").value.trim().toUpperCase(),k=Object.keys(COUPONS).find(x=>x.toUpperCase()===c);cp=k||"";$("#tt").innerHTML=totHTML();const m=$("#cpm");m.textContent=!c?"":k?"✓ تم تطبيق الكود "+k:"الكود غير صحيح";m.style.color=k?"#16a34a":"";}
 function cartView(){const t=tot();if(!t.it.length)return`<div class="emp"><b>🛒</b>السلة فارغة<br><br><button class="send" data-v="cats" style="display:inline-block;padding:12px 28px">تصفّح المنتجات</button></div>`;
  return t.it.map(({x,q})=>`<div class="row"><div class="th">${x.img?`<img src="${esc(x.img)}" alt="">`:EM(x.e)}</div><div class="in"><b>${esc(x.n)}</b><small>${nf(x.p*q)} د.ع</small></div><div class="q"><button data-q="${x.id}" data-d="-1">−</button><b>${q}</b><button data-q="${x.id}" data-d="1">+</button></div></div>`).join("")+
- `<div class="tot"><div><span>المجموع</span><span>${nf(t.sub)} د.ع</span></div><div><span>التوصيل</span><span>${nf(t.del)} د.ع</span></div><div class="t"><span>الإجمالي</span><span>${nf(t.total)} د.ع</span></div></div>
+ `<div class="tot" id="tt">${totHTML()}</div><div style="display:flex;gap:8px"><input id="cpn" placeholder="كود الخصم (إن وجد)" value="${esc(cp)}" style="margin:0"><button class="ad" data-cp style="width:auto;padding:0 18px;font-size:1rem;height:46px">تطبيق</button></div><div class="err" id="cpm" style="margin-top:6px"></div>
  <input id="name" placeholder="الاسم" autocomplete="name"><input id="phone" placeholder="رقم الهاتف" inputmode="tel" autocomplete="tel"><select id="prov">${PROV.map(p=>`<option>${p}</option>`).join("")}</select><input id="addr" placeholder="المنطقة / العنوان"><textarea id="note" rows="2" placeholder="ملاحظات (اختياري)"></textarea><input class="hp" id="hp" tabindex="-1" autocomplete="off"><div class="err" id="err"></div><a class="send" id="send" target="_blank" rel="noopener">إرسال الطلب عبر واتساب 💬</a>`;}
-document.addEventListener("click",e=>{const t=e.target.closest("[data-add],[data-q],[data-v],[data-cat],[data-inst],#bk,#send");if(!t)return;
- if(t.dataset.add){cart[t.dataset.add]=(cart[t.dataset.add]||0)+1;save();render0();toast("تمت الإضافة للسلة ✓");}
- else if(t.dataset.q){const id=t.dataset.q,n=(cart[id]||0)+ +t.dataset.d;n>0?cart[id]=n:delete cart[id];save();render();}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-add],[data-q],[data-v],[data-cat],[data-inst],[data-pd],[data-cp],#bk,#send");if(!t)return;
+ if(t.dataset.add)addC(t.dataset.add);
+ else if(t.dataset.q){const id=t.dataset.q,n=(cart[id]||0)+ +t.dataset.d;{const x=P.find(p=>p.id==id);if(+t.dataset.d>0&&x&&typeof x.st==="number"&&n>x.st){toast("وصلت لأقصى كمية متوفرة");return;}}n>0?cart[id]=n:delete cart[id];save();render();}
  else if(t.dataset.v)go(t.dataset.v);else if(t.dataset.cat!=null)go("cat",+t.dataset.cat);
- else if(t.id==="bk")go("cats");else if(t.id==="send")send(e,t);else if(t.dataset.inst!=null)inst();});
+ else if(t.id==="bk")go("cats");else if(t.id==="send")send(e,t);else if(t.dataset.inst!=null)inst();else if(t.dataset.pd)pd(t.dataset.pd);else if(t.dataset.cp!=null)applyCp();});
 function render0(){const n=count();$("#cn").hidden=!n;$("#cn").textContent=n;}
 function send(e,a){if($("#hp").value){e.preventDefault();return;}const t=tot(),ph=$("#phone").value.replace(/\s/g,"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));let err="";
  const last=+(localStorage.getItem("last")||0);
  if(Date.now()-last<30000)err="انتظر قليلاً قبل إرسال طلب ثاني.";else if(!$("#name").value.trim())err="اكتب اسمك.";else if(!$("#addr").value.trim())err="اكتب المنطقة أو العنوان.";else if(!/^[0-9]{10,11}$/.test(ph))err="اكتب رقم هاتف صحيح (10 أو 11 رقم).";
  $("#err").textContent=err;if(err){e.preventDefault();return;}
  try{localStorage.setItem("last",Date.now())}catch(x){}
- const id="R"+Date.now().toString(36).slice(-5).toUpperCase(),o={id,t:Date.now(),name:$("#name").value.trim(),phone:ph,prov:$("#prov").value,addr:$("#addr").value.trim(),note:$("#note").value.trim(),items:t.it.map(i=>({id:i.x.id,n:i.x.n,q:i.q,p:i.x.p})),sub:t.sub,disc:0,coupon:"",del:t.del,total:t.total,status:"pending"};
+ const id="R"+Date.now().toString(36).slice(-5).toUpperCase(),o={id,t:Date.now(),name:$("#name").value.trim(),phone:ph,prov:$("#prov").value,addr:$("#addr").value.trim(),note:$("#note").value.trim(),items:t.it.map(i=>({id:i.x.id,n:i.x.n,q:i.q,p:i.x.p})),sub:t.sub,disc:t.disc,coupon:cp,del:t.del,total:t.total,status:"pending"};
  if(db)db.collection("orders").doc(id).set(o).catch(()=>{});
- const m=`طلب جديد من بكسل ستور #${id}\nالاسم: ${o.name}\nالهاتف: ${ph}\nالمحافظة: ${o.prov}\nالعنوان: ${o.addr}\n\n`+o.items.map(i=>`• ${i.n} × ${i.q} = ${nf(i.p*i.q)} د.ع`).join("\n")+`\n\nالمجموع: ${nf(t.sub)} د.ع\nالتوصيل: ${nf(t.del)} د.ع\nالإجمالي: ${nf(t.total)} د.ع`+(o.note?`\nملاحظات: ${o.note}`:"");
+ const m=`طلب جديد من بكسل ستور #${id}\nالاسم: ${o.name}\nالهاتف: ${ph}\nالمحافظة: ${o.prov}\nالعنوان: ${o.addr}\n\n`+o.items.map(i=>`• ${i.n} × ${i.q} = ${nf(i.p*i.q)} د.ع`).join("\n")+`\n\nالمجموع: ${nf(t.sub)} د.ع${t.disc?`\nخصم (${cp}): -${nf(t.disc)} د.ع`:""}\nالتوصيل: ${nf(t.del)} د.ع\nالإجمالي: ${nf(t.total)} د.ع`+(o.note?`\nملاحظات: ${o.note}`:"");
  a.href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(m)}`;
- setTimeout(()=>{cart={};save();go("home");toast("تم تجهيز طلبك، أكمل الإرسال من واتساب ✓");},700);}
-function apply(d){if(d&&d.P){P=typeof d.P==="string"?JSON.parse(d.P):d.P;if(d.DELIVERY!=null)DELIVERY=+d.DELIVERY;if(d.WHATSAPP)WHATSAPP=String(d.WHATSAPP);}}
+ setTimeout(()=>{cart={};cp="";save();go("home");toast("تم تجهيز طلبك، أكمل الإرسال من واتساب ✓");},700);}
+function apply(d){if(d&&d.COUPONS&&typeof d.COUPONS==="object")COUPONS=d.COUPONS;if(d&&d.P){P=typeof d.P==="string"?JSON.parse(d.P):d.P;if(d.DELIVERY!=null)DELIVERY=+d.DELIVERY;if(d.WHATSAPP)WHATSAPP=String(d.WHATSAPP);}}
 fetch("store-data.json").then(r=>r.json()).then(d=>{apply(d);render();}).catch(()=>render()).finally(()=>{
  try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();db.doc("store/main").onSnapshot(s=>{if(s.exists){try{apply(s.data());if(!document.activeElement||!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))render();}catch(e){}}},()=>{});}catch(e){}});
 (function(){for(let i=0;i<(innerWidth<600?7:12);i++){const s=document.createElement("i"),z=3+Math.random()*5;s.className="sp";s.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;--dx:${Math.random()*100-50}px;animation-duration:${9+Math.random()*9}s;animation-delay:${-Math.random()*14}s`;document.body.appendChild(s);}})();
@@ -144,6 +166,9 @@ function how(){const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),s=documen
  s.innerHTML=`<div style="background:#ffffff;border:1px solid rgba(37,99,235,.3);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;color:#0f1b3d;font-family:inherit;line-height:1.8"><b style="font-size:1.15rem;color:#1d4ed8">طريقة التثبيت</b><p style="margin:8px 0 14px">${ios?"اضغط زر المشاركة ⬆️ بالأسفل، ثم اختر «إضافة إلى الشاشة الرئيسية».":"افتح قائمة المتصفح ⋮ ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».<br>وإذا فتحت الرابط من داخل واتساب أو تلگرام، افتحه أولاً بمتصفح كروم."}</p>${ios?"":`<a href="intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end" style="display:block;text-align:center;padding:12px;border-radius:12px;margin-bottom:10px;font-weight:800;color:#1d4ed8;border:1px solid rgba(37,99,235,.5);text-decoration:none">فتح الصفحة بمتصفح كروم</a>`}<button style="width:100%;padding:12px;border-radius:12px;font:inherit;font-weight:800;background:linear-gradient(135deg,#60a5fa,#2563eb);color:#ffffff;border:0">تمام</button></div>`;
  s.onclick=e=>{if(e.target===s||e.target.tagName==="BUTTON")s.remove();};document.body.appendChild(s);}
 async function inst(){if(dip){dip.prompt();try{const r=await dip.userChoice;if(r.outcome==="accepted")dip=null;}catch(e){}return;}how();}
+document.addEventListener("input",e=>{if(e.target.id==="q"){sq=e.target.value.trim();if(sq){view="search";cat=null;render();}else if(view==="search")go("home");}});
+document.addEventListener("change",e=>{if(e.target.id==="so"){sort=e.target.value;render();}});
+history.replaceState({v:"home",c:null},"");addEventListener("popstate",e=>{const s=e.state||{v:"home",c:null};go(s.v,s.c,true);});
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 (function(){const w=$("#wl");try{if(sessionStorage.getItem("w"))return w.remove();sessionStorage.setItem("w","1")}catch(e){}setTimeout(()=>{w.classList.add("off");setTimeout(()=>w.remove(),700)},1800);})();
 render();

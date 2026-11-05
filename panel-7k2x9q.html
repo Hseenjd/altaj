@@ -169,6 +169,7 @@ async function loadData(){
 }
 function save(){
   if(db){if(!admin){toast("سجّل دخول أولاً");return;}
+    {const kb=Math.round(JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}).length/1024);if(kb>1000){toast("الحجم "+kb+" KB تجاوز الحد. اضغط الصور من الإعدادات أولاً");return;}}
     db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP,COUPONS}).then(()=>toast("تم النشر للجميع ✓")).catch(e=>{console.error(e);toast("فشل النشر: "+(e.code||e.message))});return;}
   try{localStorage.setItem("taj_data",JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}));toast("تم الحفظ ✓");}catch(e){toast("ما انحفظ: الذاكرة ممتلئة");}
 }
@@ -176,7 +177,7 @@ const ordersLocal=()=>{try{return JSON.parse(localStorage.getItem("taj_orders")|
 const saveOrdersLocal=()=>{try{localStorage.setItem("taj_orders",JSON.stringify(orders));}catch(e){}};
 function loadOrders(){
   if(db){if(unsub)return;
-    unsub=db.collection("orders").orderBy("t","desc").onSnapshot(sn=>{orders=sn.docs.map(d=>d.data());if(ready&&sn.docChanges().some(c=>c.type==="added"))toast("🔔 وصلك طلب جديد");ready=true;if(["dash","orders"].includes(tab)&&$("mdl").hidden)render();else renderTabs();},()=>{});
+    unsub=db.collection("orders").orderBy("t","desc").onSnapshot(sn=>{orders=sn.docs.map(d=>d.data());if(ready&&sn.docChanges().some(c=>c.type==="added")){toast("🔔 وصلك طلب جديد");beep();};ready=true;if(["dash","orders"].includes(tab)&&$("mdl").hidden)render();else renderTabs();},()=>{});
   }else orders=ordersLocal();
 }
 function setStatus(id,st){const o=orders.find(x=>x.id===id);if(!o)return;o.status=st;if(db)db.collection("orders").doc(id).update({status:st}).catch(()=>toast("فشل التحديث"));else saveOrdersLocal();}
@@ -199,11 +200,20 @@ function renderTabs(){
   const np=orders.filter(o=>o.status==="pending").length;
   $("tabs").innerHTML=TABS.map(([k,l])=>`<button class="tab${k===tab?" on":""}" data-tab="${k}">${l}${k==="orders"&&np?` <span class="nb">${np}</span>`:""}</button>`).join("");
 }
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.setValueAtTime(.25,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.6);o.start();o.stop(a.currentTime+.6);navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}}
+async function optimizeImgs(){let before=0,after=0,n=0;toast("جاري ضغط الصور…");
+ for(const x of P){if(!x.img||!String(x.img).startsWith("data:"))continue;before+=x.img.length;
+  const nu=await new Promise(res=>{const im=new Image();im.onload=()=>{const k=Math.min(1,520/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.6));};im.onerror=()=>res(null);im.src=x.img;});
+  if(nu&&nu.length<x.img.length){x.img=nu;n++;}after+=x.img.length;}
+ save();render();toast("تم ضغط "+n+" صورة، وفّرت "+Math.round((before-after)/1024)+" KB ✓");}
+function printOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;const w=window.open("","_blank");if(!w){toast("اسمح بالنوافذ المنبثقة للطباعة");return;}
+ w.document.write(`<!doctype html><html dir="rtl" lang="ar"><meta charset="utf-8"><title>فاتورة ${esc(o.id)}</title><style>body{font-family:Cairo,Arial,sans-serif;padding:24px;max-width:700px;margin:auto;color:#111}h1{margin:0;color:#1d4ed8}table{width:100%;border-collapse:collapse;margin:14px 0}td,th{border-bottom:1px solid #ddd;padding:8px;text-align:right}.t{font-weight:800;font-size:1.25rem}.m{color:#666}.meter{height:10px;border-radius:99px;background:#e3ebff;overflow:hidden;margin:6px 0 10px}.meter i{display:block;height:100%;border-radius:99px;transition:width .4s}
+</style><h1>بكسل ستور</h1><p class="m">فاتورة #${esc(o.id)} · ${new Date(o.t).toLocaleString("ar-IQ")}</p><p><b>${esc(o.name)}</b><br>${esc(o.phone)}<br>${esc(o.prov)}، ${esc(o.addr)}</p><table><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>المجموع</th></tr>${o.items.map(i=>`<tr><td>${esc(i.n)}</td><td>${i.q}</td><td>${fmt(i.p)}</td><td>${fmt(i.p*i.q)}</td></tr>`).join("")}</table><p>المجموع: ${fmt(o.sub)}${o.disc?" · خصم: -"+fmt(o.disc):""} · التوصيل: ${fmt(o.del)}</p><p class="t">الإجمالي: ${fmt(o.total)}</p>${o.note?`<p class="m">ملاحظات: ${esc(o.note)}</p>`:""}<script>onload=function(){print()}<\/script>`);w.document.close();}
 const ofilter=()=>{const q=norm(osq||"");return orders.filter(o=>(ofil==="all"||o.status===ofil)&&(!q||norm([o.id,o.name,o.phone,o.prov,o.addr,o.note||"",...o.items.map(i=>i.n)].join(" ")).includes(q)));};
 function ordersList(){const list=ofilter();return `<p class="note" style="margin:4px 0">${list.length} طلب</p>`+(list.map(o=>`<details class="ord"><summary><span>#${o.id} · ${esc(o.name)} · ${ST[o.status]}</span><b>${fmt(o.total)}</b></summary>
     <p>${new Date(o.t).toLocaleString("ar-IQ")}</p><p>📞 ${esc(o.phone)} · 📍 ${esc(o.prov)}، ${esc(o.addr)}</p>${o.note?`<p>📝 ${esc(o.note)}</p>`:""}
     <p>${o.items.map(i=>esc(i.n)+" × "+i.q).join("<br>")}</p><p>${o.disc?`خصم: -${fmt(o.disc)} · `:""}التوصيل: ${fmt(o.del)} · <b>المجموع: ${fmt(o.total)}</b></p>
-    <div class="ctl"><select data-ost="${o.id}" style="width:auto">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}">💬 واتساب الزبون</a><button data-odel="${o.id}">🗑️ حذف</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');}
+    <div class="ctl"><select data-ost="${o.id}" style="width:auto">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}">💬 واتساب الزبون</a><button data-print="${o.id}">🖨️ طباعة</button><button data-odel="${o.id}">🗑️ حذف</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');}
 function exportCSV(){const l=ofilter();if(!l.length){toast("ما كو طلبات للتصدير");return;}
  const q=s=>{let v=String(s==null?"":s);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};
  const rows=[["رقم الطلب","التاريخ","الاسم","الهاتف","المحافظة","العنوان","المنتجات","المجموع","التوصيل","الإجمالي","الحالة","ملاحظات"]].concat(l.map(o=>[o.id,new Date(o.t).toLocaleString("en-GB"),o.name,o.phone,o.prov,o.addr,o.items.map(i=>i.n+" × "+i.q).join(" | "),o.sub,o.del,o.total,ST[o.status],o.note||""]));
@@ -236,7 +246,7 @@ function render(){
   }else{
     const kb=Math.round(JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}).length/1024);
     v.innerHTML=`<h2>الإعدادات</h2><div class="two"><div><label for="sd">سعر التوصيل (د.ع)</label><input id="sd" type="number" value="${DELIVERY}"></div><div><label for="sw">رقم واتساب (دولي بدون +)</label><input id="sw" value="${esc(WHATSAPP)}" inputmode="numeric"></div></div><button class="btn" id="aset" style="margin-top:10px">💾 حفظ الإعدادات</button>
-    <h2>📤 نشر التعديلات للزبائن</h2>${db?`<p class="note" style="color:var(--em)">✅ متصل بقاعدة البيانات: كل تعديل ينتشر للزبائن مباشرة. حجم البيانات ${kb} KB من ~1000 KB المسموحة.</p><button class="btn s" id="aseed">☁️ نشر الآن للجميع</button>`:`<p class="note">التعديلات هنا تنحفظ بمتصفحك. حتى يشوفها الزبائن: اضغط الزر، وارفع الملف <b>store-data.json</b> على GitHub بنفس مكان index.html واستبدل القديم. (حجم البيانات ${kb} KB)</p><button class="btn g" id="aexp">⬇️ تحميل ملف النشر store-data.json</button>`}
+    <h2>📤 نشر التعديلات للزبائن</h2>${db?`<p class="note" style="color:var(--em)">✅ متصل بقاعدة البيانات: كل تعديل ينتشر للزبائن مباشرة. حجم البيانات ${kb} KB من ~1000 KB المسموحة.</p><div class="meter"><i style="width:${Math.min(100,Math.round(kb/10))}%;background:${kb>900?"#dc2626":kb>700?"#f59e0b":"#16a34a"}"></i></div><button class="btn s" data-opt>🗜️ ضغط الصور (توفير مساحة)</button><button class="btn s" id="aseed">☁️ نشر الآن للجميع</button>`:`<p class="note">التعديلات هنا تنحفظ بمتصفحك. حتى يشوفها الزبائن: اضغط الزر، وارفع الملف <b>store-data.json</b> على GitHub بنفس مكان index.html واستبدل القديم. (حجم البيانات ${kb} KB)</p><button class="btn g" id="aexp">⬇️ تحميل ملف النشر store-data.json</button>`}
     <h2>خيارات متقدمة</h2><button class="btn r" id="areset">♻️ تصفير تعديلات هذا المتصفح</button>`;
   }
 }
@@ -253,13 +263,15 @@ function productForm(id,nm){
   ${x.img?`<img loading="lazy" decoding="async" class="prev" id="prev" src="${x.img}" alt=""><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="frm" style="width:auto">إزالة الصورة الحالية</label>`:`<img loading="lazy" decoding="async" class="prev" id="prev" alt="" hidden>`}
   <p class="err" id="ferr" role="alert"></p><div class="ctl"><button class="btn g" id="fsave">💾 حفظ</button><button class="btn s" data-close>إلغاء</button></div>`);
 }
-const readImg=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);r(c.toDataURL("image/jpeg",.78));};im.src=fr.result;};fr.readAsDataURL(f);});
+const readImg=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,560/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);r(c.toDataURL("image/jpeg",.7));};im.src=fr.result;};fr.readAsDataURL(f);});
 
 // ===== الأحداث =====
 document.addEventListener("click",async e=>{
   const t=e.target,tb=t.closest("[data-tab]");
   if(tb){tab=tb.dataset.tab;render();return;}
    if(t.dataset.export!==undefined){exportCSV();return;}
+   if(t.dataset.opt!==undefined){optimizeImgs();return;}
+   if(t.dataset.print){printOrder(t.dataset.print);return;}
   if(t.dataset.pc!==undefined){pcat=t.dataset.pc;$("pchips").innerHTML=pChips();$("plist").innerHTML=prodCards();return;}
   if(t.id==="mdl"||t.dataset.close!==undefined){closeM();return;}
   if(t.id==="lgo")return doLogin();
