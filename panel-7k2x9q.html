@@ -148,8 +148,8 @@ function fbMsg(e){
 }
 const sha=async t=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,"0")).join("");
 const ST={pending:"قيد الانتظار",prep:"قيد التجهيز",ship:"تم الشحن",done:"تم التوصيل",cancel:"ملغي"};
-const TABS=[["dash","📊 اللوحة"],["orders","🧾 الطلبات"],["prod","📦 المنتجات"],["mkt","🎟️ الأكواد والتعليقات"],["set","⚙️ الإعدادات"]];
-let P=[],DELIVERY=5000,WHATSAPP="9647771928004",COUPONS={},orders=[];
+const TABS=[["dash","📊 اللوحة"],["orders","🧾 الطلبات"],["cust","👥 الزبائن"],["prod","📦 المنتجات"],["mkt","🎟️ الأكواد والتعليقات"],["set","⚙️ الإعدادات"]];
+let CFG={FREEDEL:0,MINORD:0,ANN:""},cq="",odr="all",P=[],DELIVERY=5000,WHATSAPP="9647771928004",COUPONS={},orders=[];
 let pcat="الكل",tab="dash",ofil="all",osq="",psq="",db=null,auth=null,admin=false,unsub=null,ready=false,pimg=null,pdel=false,editId=null;
 
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),1600);}
@@ -161,17 +161,17 @@ const closeM=()=>{$("mdl").hidden=true;};
 const head=t=>`<div class="row" style="border:0"><b>${t}</b><button class="btn s" data-close>✕</button></div>`;
 
 // ===== البيانات =====
-function apply(d){if(!d)return;P=d.P||[];if(d.DELIVERY!=null)DELIVERY=d.DELIVERY;if(d.WHATSAPP)WHATSAPP=d.WHATSAPP;COUPONS=d.COUPONS||{};}
+function apply(d){if(!d)return;CFG.FREEDEL=+d.FREEDEL||0;CFG.MINORD=+d.MINORD||0;CFG.ANN=d.ANN||"";P=d.P||[];if(d.DELIVERY!=null)DELIVERY=d.DELIVERY;if(d.WHATSAPP)WHATSAPP=d.WHATSAPP;COUPONS=d.COUPONS||{};}
 async function loadData(){
-  if(db){try{const sn=await db.doc("store/main").get();if(sn.exists){const d=sn.data();apply({P:JSON.parse(d.P),DELIVERY:d.DELIVERY,WHATSAPP:d.WHATSAPP,COUPONS:d.COUPONS});return;}}catch(e){}}
+  if(db){try{const sn=await db.doc("store/main").get();if(sn.exists){const d=sn.data();apply({P:JSON.parse(d.P),DELIVERY:d.DELIVERY,WHATSAPP:d.WHATSAPP,COUPONS:d.COUPONS,FREEDEL:d.FREEDEL,MINORD:d.MINORD,ANN:d.ANN});return;}}catch(e){}}
   try{const l=localStorage.getItem("taj_data");if(l){apply(JSON.parse(l));return;}}catch(e){}
   try{const r=await fetch("store-data.json",{cache:"no-store"});if(r.ok){apply(await r.json());return;}}catch(e){}
 }
 function save(){
   if(db){if(!admin){toast("سجّل دخول أولاً");return;}
-    {const kb=Math.round(JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}).length/1024);if(kb>1000){toast("الحجم "+kb+" KB تجاوز الحد. اضغط الصور من الإعدادات أولاً");return;}}
-    db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP,COUPONS}).then(()=>toast("تم النشر للجميع ✓")).catch(e=>{console.error(e);toast("فشل النشر: "+(e.code||e.message))});return;}
-  try{localStorage.setItem("taj_data",JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}));toast("تم الحفظ ✓");}catch(e){toast("ما انحفظ: الذاكرة ممتلئة");}
+    {const kb=Math.round(JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS,...CFG}).length/1024);if(kb>1000){toast("الحجم "+kb+" KB تجاوز الحد. اضغط الصور من الإعدادات أولاً");return;}}
+    db.doc("store/main").set({P:JSON.stringify(P),DELIVERY,WHATSAPP,COUPONS,...CFG}).then(()=>toast("تم النشر للجميع ✓")).catch(e=>{console.error(e);toast("فشل النشر: "+(e.code||e.message))});return;}
+  try{localStorage.setItem("taj_data",JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS,...CFG}));toast("تم الحفظ ✓");}catch(e){toast("ما انحفظ: الذاكرة ممتلئة");}
 }
 const ordersLocal=()=>{try{return JSON.parse(localStorage.getItem("taj_orders")||"[]");}catch(e){return [];}};
 const saveOrdersLocal=()=>{try{localStorage.setItem("taj_orders",JSON.stringify(orders));}catch(e){}};
@@ -208,12 +208,21 @@ async function optimizeImgs(){let before=0,after=0,n=0;toast("جاري ضغط ا
  save();render();toast("تم ضغط "+n+" صورة، وفّرت "+Math.round((before-after)/1024)+" KB ✓");}
 function printOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;const w=window.open("","_blank");if(!w){toast("اسمح بالنوافذ المنبثقة للطباعة");return;}
  w.document.write(`<!doctype html><html dir="rtl" lang="ar"><meta charset="utf-8"><title>فاتورة ${esc(o.id)}</title><style>body{font-family:Cairo,Arial,sans-serif;padding:24px;max-width:700px;margin:auto;color:#111}h1{margin:0;color:#1d4ed8}table{width:100%;border-collapse:collapse;margin:14px 0}td,th{border-bottom:1px solid #ddd;padding:8px;text-align:right}.t{font-weight:800;font-size:1.25rem}.m{color:#666}.meter{height:10px;border-radius:99px;background:#e3ebff;overflow:hidden;margin:6px 0 10px}.meter i{display:block;height:100%;border-radius:99px;transition:width .4s}
+.row a.btn{padding:4px 10px}
 </style><h1>بكسل ستور</h1><p class="m">فاتورة #${esc(o.id)} · ${new Date(o.t).toLocaleString("ar-IQ")}</p><p><b>${esc(o.name)}</b><br>${esc(o.phone)}<br>${esc(o.prov)}، ${esc(o.addr)}</p><table><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>المجموع</th></tr>${o.items.map(i=>`<tr><td>${esc(i.n)}</td><td>${i.q}</td><td>${fmt(i.p)}</td><td>${fmt(i.p*i.q)}</td></tr>`).join("")}</table><p>المجموع: ${fmt(o.sub)}${o.disc?" · خصم: -"+fmt(o.disc):""} · التوصيل: ${fmt(o.del)}</p><p class="t">الإجمالي: ${fmt(o.total)}</p>${o.note?`<p class="m">ملاحظات: ${esc(o.note)}</p>`:""}<script>onload=function(){print()}<\/script>`);w.document.close();}
-const ofilter=()=>{const q=norm(osq||"");return orders.filter(o=>(ofil==="all"||o.status===ofil)&&(!q||norm([o.id,o.name,o.phone,o.prov,o.addr,o.note||"",...o.items.map(i=>i.n)].join(" ")).includes(q)));};
+const sinceOf=()=>{const d=new Date().setHours(0,0,0,0);return odr==="today"?d:odr==="7"?Date.now()-7*864e5:odr==="30"?Date.now()-30*864e5:0;};
+function customers(){const m={};orders.filter(o=>o.status!=="cancel").forEach(o=>{const k=waNum(o.phone),c=m[k]||(m[k]={name:o.name,phone:o.phone,k,n:0,total:0,last:0,prov:o.prov});c.n++;c.total+=+o.total||0;if(o.t>c.last){c.last=o.t;c.name=o.name;c.prov=o.prov;}});const q=norm(cq||"");return Object.values(m).filter(c=>!q||norm(c.name+" "+c.phone).includes(q)).sort((a,b)=>b.total-a.total);}
+function custList(){const l=customers();return `<p class="note" style="margin:4px 0">${l.length} زبون</p>`+(l.map((c,i)=>`<div class="row"><span>${i<3?["🥇","🥈","🥉"][i]+" ":""}${esc(c.name)} · ${esc(c.phone)} · ${c.n} طلب</span><b>${fmt(c.total)}</b><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${c.k}">💬</a></div>`).join("")||'<p class="empty">ما كو زبائن للحين.</p>');}
+function dl(name,mime,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:mime}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);}
+function exportCust(){const l=customers();if(!l.length){toast("ما كو زبائن للتصدير");return;}const q=s=>{let v=String(s==null?"":s);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};dl("customers-"+new Date().toISOString().slice(0,10)+".csv","text/csv;charset=utf-8","\ufeff"+[["الاسم","الهاتف","المحافظة","عدد الطلبات","إجمالي الشراء","آخر طلب"]].concat(l.map(c=>[c.name,c.phone,c.prov,c.n,c.total,new Date(c.last).toLocaleDateString("en-GB")])).map(r=>r.map(q).join(",")).join("\r\n"));toast("تم تصدير "+l.length+" زبون ✓");}
+function bulkPrice(){const c=$("bpc").value,pc=parseFloat($("bpp").value);if(!isFinite(pc)||pc===0||pc<=-90||pc>200){toast("اكتب نسبة صحيحة (مثل 5 أو -10)");return;}const l=P.filter(x=>!c||x.c===c);if(!l.length)return;if(!confirm((pc>0?"رفع":"خفض")+" أسعار "+l.length+" منتج بنسبة "+Math.abs(pc)+"% ؟"))return;l.forEach(x=>{x.p=Math.max(0,Math.round(x.p*(1+pc/100)/250)*250);});save();render();toast("تم تعديل "+l.length+" سعر ✓");}
+function backup(){dl("pixel-backup-"+new Date().toISOString().slice(0,10)+".json","application/json",JSON.stringify({v:1,store:{P,DELIVERY,WHATSAPP,COUPONS,...CFG},orders}));toast("تم تنزيل النسخة الاحتياطية ✓");}
+function restoreBk(f){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result),s=d.store||d;if(!Array.isArray(s.P)||s.P.some(x=>!x||x.id==null||typeof x.n!=="string"||!isFinite(+x.p)))throw 0;if(!confirm("استعادة "+s.P.length+" منتج؟ راح تستبدل البيانات الحالية."))return;apply({P:s.P,DELIVERY:s.DELIVERY,WHATSAPP:s.WHATSAPP,COUPONS:s.COUPONS,FREEDEL:s.FREEDEL,MINORD:s.MINORD,ANN:s.ANN});save();render();toast("تمت الاستعادة ✓");}catch(e){toast("ملف النسخة غير صالح");}};r.readAsText(f);}
+const ofilter=()=>{const q=norm(osq||""),sn=sinceOf();return orders.filter(o=>(ofil==="all"||o.status===ofil)&&o.t>=sn&&(!q||norm([o.id,o.name,o.phone,o.prov,o.addr,o.note||"",...o.items.map(i=>i.n)].join(" ")).includes(q)));};
 function ordersList(){const list=ofilter();return `<p class="note" style="margin:4px 0">${list.length} طلب</p>`+(list.map(o=>`<details class="ord"><summary><span>#${o.id} · ${esc(o.name)} · ${ST[o.status]}</span><b>${fmt(o.total)}</b></summary>
     <p>${new Date(o.t).toLocaleString("ar-IQ")}</p><p>📞 ${esc(o.phone)} · 📍 ${esc(o.prov)}، ${esc(o.addr)}</p>${o.note?`<p>📝 ${esc(o.note)}</p>`:""}
     <p>${o.items.map(i=>esc(i.n)+" × "+i.q).join("<br>")}</p><p>${o.disc?`خصم: -${fmt(o.disc)} · `:""}التوصيل: ${fmt(o.del)} · <b>المجموع: ${fmt(o.total)}</b></p>
-    <div class="ctl"><select data-ost="${o.id}" style="width:auto">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}">💬 واتساب الزبون</a><button data-print="${o.id}">🖨️ طباعة</button><button data-odel="${o.id}">🗑️ حذف</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');}
+    <div class="ctl"><select data-ost="${o.id}" style="width:auto">${Object.keys(ST).map(k=>`<option value="${k}"${o.status===k?" selected":""}>${ST[k]}</option>`).join("")}</select><a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${waNum(o.phone)}?text=${encodeURIComponent("هلا "+o.name+"، طلبك #"+o.id+" "+ST[o.status]+" ✅ — بكسل ستور")}">💬 واتساب الزبون</a><button data-print="${o.id}">🖨️ طباعة</button><button data-odel="${o.id}">🗑️ حذف</button></div></details>`).join("")||'<p class="empty">ما كو طلبات.</p>');}
 function exportCSV(){const l=ofilter();if(!l.length){toast("ما كو طلبات للتصدير");return;}
  const q=s=>{let v=String(s==null?"":s);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};
  const rows=[["رقم الطلب","التاريخ","الاسم","الهاتف","المحافظة","العنوان","المنتجات","المجموع","التوصيل","الإجمالي","الحالة","ملاحظات"]].concat(l.map(o=>[o.id,new Date(o.t).toLocaleString("en-GB"),o.name,o.phone,o.prov,o.addr,o.items.map(i=>i.n+" × "+i.q).join(" | "),o.sub,o.del,o.total,ST[o.status],o.note||""]));
@@ -225,7 +234,9 @@ function dashExtra(){const ok=orders.filter(o=>o.status!=="cancel"),now=Date.now
  const top=Object.entries(tp).sort((x,y)=>y[1]-x[1]).slice(0,5),days=[...Array(7)].map((_,k)=>{const s=sod-(6-k)*day,l=ok.filter(o=>o.t>=s&&o.t<s+day);return{d:new Date(s).toLocaleDateString("ar-IQ",{weekday:"short"}),n:l.length,v:sum(l)};}),mx=Math.max(1,...days.map(x=>x.v));
  return `<h2>💰 المبيعات</h2><div class="stats"><div class="st"><b>${fmt(sum(td))}</b><small>اليوم (${td.length} طلب)</small></div><div class="st"><b>${fmt(sum(wk))}</b><small>آخر 7 أيام (${wk.length})</small></div><div class="st"><b>${fmt(sum(mo))}</b><small>آخر 30 يوم (${mo.length})</small></div><div class="st"><b>${fmt(avg)}</b><small>متوسط الطلب</small></div></div>
  <h2>📈 آخر 7 أيام</h2><div class="chart">${days.map(x=>`<div class="cb"><b>${x.n}</b><div class="bw"><i style="height:${Math.max(3,Math.round(x.v/mx*100))}%"></i></div><small>${x.d}</small></div>`).join("")}</div>
- <h2>🏆 الأكثر طلباً</h2>${top.map(([n,q],i)=>`<div class="row"><span>${i+1}. ${esc(n)}</span><b>${q} ×</b></div>`).join("")||'<p class="empty">ما كو بيانات للحين.</p>'}`;}
+ <h2>🏆 الأكثر طلباً</h2>${top.map(([n,q],i)=>`<div class="row"><span>${i+1}. ${esc(n)}</span><b>${q} ×</b></div>`).join("")||'<p class="empty">ما كو بيانات للحين.</p>'}
+ <h2>⚠️ قاربت على النفاد</h2>${(P.filter(x=>x.out||(typeof x.st==="number"&&x.st<=3)).slice(0,6).map(x=>`<div class="row"><span>${esc(x.n)}</span><b>${x.out||x.st===0?"نفد":"باقي "+x.st}</b></div>`).join(""))||'<p class="empty">كل المنتجات متوفرة ✓</p>'}
+ <h2>📍 المحافظات الأكثر طلباً</h2>${(Object.entries(ok.reduce((m,o)=>(m[o.prov]=(m[o.prov]||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n,c])=>`<div class="row"><span>${esc(n)}</span><b>${c} طلب</b></div>`).join(""))||'<p class="empty">ما كو بيانات للحين.</p>'}`;}
 function render(){
   renderTabs();const v=$("view");
   const np=orders.filter(o=>o.status==="pending").length;
@@ -235,7 +246,9 @@ function render(){
     ${dashExtra()}<h2>آخر الطلبات</h2>${orders.slice(0,6).map(o=>`<div class="row"><span>#${o.id} · ${esc(o.name)}</span><b>${fmt(o.total)}</b><span>${ST[o.status]}</span></div>`).join("")||'<p class="empty">ما كو طلبات للحين.</p>'}
     ${db?"":'<p class="note">⚠️ بدون Firebase تظهر هنا فقط الطلبات اللي تسويها من هذا الجهاز وهذا المتصفح. لعرض طلبات كل الزبائن فعّل Firebase (ملف config.js).</p>'}`;
   }else if(tab==="orders"){
-    v.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><input id="osq" type="search" placeholder="🔍 ابحث: اسم، هاتف، رقم طلب، منتج…" value="${esc(osq)}" style="flex:1 1 200px;margin:0"><select id="ofil" style="width:auto;margin:0"><option value="all">كل الحالات</option>${Object.keys(ST).map(k=>`<option value="${k}"${ofil===k?" selected":""}>${ST[k]}</option>`).join("")}</select><button class="btn g" data-export>📥 تصدير CSV</button></div><div id="olist">${ordersList()}</div>`;
+    v.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><input id="osq" type="search" placeholder="🔍 ابحث: اسم، هاتف، رقم طلب، منتج…" value="${esc(osq)}" style="flex:1 1 200px;margin:0"><select id="ofil" style="width:auto;margin:0"><option value="all">كل الحالات</option>${Object.keys(ST).map(k=>`<option value="${k}"${ofil===k?" selected":""}>${ST[k]}</option>`).join("")}</select><select id="odr" style="width:auto;margin:0"><option value="all">كل الأوقات</option><option value="today"${odr==="today"?" selected":""}>اليوم</option><option value="7"${odr==="7"?" selected":""}>آخر 7 أيام</option><option value="30"${odr==="30"?" selected":""}>آخر 30 يوم</option></select><button class="btn g" data-export>📥 تصدير CSV</button></div><div id="olist">${ordersList()}</div>`;
+  }else if(tab==="cust"){
+    v.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><input id="csq" type="search" placeholder="🔍 ابحث باسم أو هاتف الزبون…" value="${esc(cq)}" style="flex:1 1 200px;margin:0"><button class="btn g" data-cexp>📥 تصدير CSV</button></div><div id="clist">${custList()}</div>`;
   }else if(tab==="prod"){
     v.innerHTML=`<div class="bar" style="position:sticky;top:106px;z-index:3;background:var(--bg);padding:6px 0"><input id="psq" type="search" placeholder="ابحث: كبل، كيبورد، موس، لابتوب…" value="${esc(psq)}"><button class="btn g" data-new>➕ منتج جديد</button></div><div class="pchips" id="pchips">${pChips()}</div><div id="plist">${prodCards()}</div>`;
   }else if(tab==="mkt"){
@@ -244,8 +257,10 @@ function render(){
     <h2>💬 تعليقات الزبائن (انشر اللي توصلك على الواتساب)</h2><div class="two"><select id="rvp">${P.map(x=>`<option value="${x.id}">${esc(x.n)}</option>`).join("")}</select><input id="rvn" placeholder="اسم الزبون"></div><div class="two" style="margin-top:8px"><select id="rvs"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select><input id="rvt" placeholder="نص التعليق"></div><p class="err" id="rerr"></p><button class="btn" id="rvadd">نشر التعليق</button>
     ${P.flatMap(x=>(x.rv||[]).map((r,i)=>`<div class="row"><span>${esc(x.n)}: ${esc(r.n)} (${r.s}⭐) ${esc(r.t)}</span><button class="btn s" data-rvdel="${x.id}:${i}">🗑️</button></div>`)).join("")}`;
   }else{
-    const kb=Math.round(JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS}).length/1024);
-    v.innerHTML=`<h2>الإعدادات</h2><div class="two"><div><label for="sd">سعر التوصيل (د.ع)</label><input id="sd" type="number" value="${DELIVERY}"></div><div><label for="sw">رقم واتساب (دولي بدون +)</label><input id="sw" value="${esc(WHATSAPP)}" inputmode="numeric"></div></div><button class="btn" id="aset" style="margin-top:10px">💾 حفظ الإعدادات</button>
+    const kb=Math.round(JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS,...CFG}).length/1024);
+    v.innerHTML=`<h2>الإعدادات</h2><div class="two"><div><label for="sd">سعر التوصيل (د.ع)</label><input id="sd" type="number" value="${DELIVERY}"></div><div><label for="sw">رقم واتساب (دولي بدون +)</label><input id="sw" value="${esc(WHATSAPP)}" inputmode="numeric"></div></div><div class="two" style="margin-top:10px"><div><label for="sf">توصيل مجاني للطلبات فوق (د.ع، 0 = معطّل)</label><input id="sf" type="number" value="${CFG.FREEDEL}"></div><div><label for="sm">أقل مبلغ للطلب (د.ع، 0 = بدون)</label><input id="sm" type="number" value="${CFG.MINORD}"></div></div><label for="sa">شريط إعلان أعلى المتجر (فاضي = بدون)</label><input id="sa" maxlength="120" value="${esc(CFG.ANN)}"><button class="btn" id="aset" style="margin-top:10px">💾 حفظ الإعدادات</button>
+    <h2>⚡ تعديل الأسعار بالجملة</h2><div class="two"><div><label for="bpc">القسم</label><select id="bpc"><option value="">كل المنتجات</option>${[...new Set(P.map(x=>x.c))].map(c=>`<option>${esc(c)}</option>`).join("")}</select></div><div><label for="bpp">النسبة % (مثل 5 أو -10)</label><input id="bpp" type="number" step="any" placeholder="-10"></div></div><button class="btn s" data-bulk style="margin-top:8px">تطبيق على الأسعار</button>
+    <h2>💾 نسخة احتياطية</h2><div class="ctl"><button class="btn s" data-bk>⬇️ تنزيل نسخة كاملة</button><button class="btn s" data-rst>♻️ استعادة نسخة</button></div><input type="file" id="rstf" accept=".json,application/json" hidden>
     <h2>📤 نشر التعديلات للزبائن</h2>${db?`<p class="note" style="color:var(--em)">✅ متصل بقاعدة البيانات: كل تعديل ينتشر للزبائن مباشرة. حجم البيانات ${kb} KB من ~1000 KB المسموحة.</p><div class="meter"><i style="width:${Math.min(100,Math.round(kb/10))}%;background:${kb>900?"#dc2626":kb>700?"#f59e0b":"#16a34a"}"></i></div><button class="btn s" data-opt>🗜️ ضغط الصور (توفير مساحة)</button><button class="btn s" id="aseed">☁️ نشر الآن للجميع</button>`:`<p class="note">التعديلات هنا تنحفظ بمتصفحك. حتى يشوفها الزبائن: اضغط الزر، وارفع الملف <b>store-data.json</b> على GitHub بنفس مكان index.html واستبدل القديم. (حجم البيانات ${kb} KB)</p><button class="btn g" id="aexp">⬇️ تحميل ملف النشر store-data.json</button>`}
     <h2>خيارات متقدمة</h2><button class="btn r" id="areset">♻️ تصفير تعديلات هذا المتصفح</button>`;
   }
@@ -271,6 +286,10 @@ document.addEventListener("click",async e=>{
   if(tb){tab=tb.dataset.tab;render();return;}
    if(t.dataset.export!==undefined){exportCSV();return;}
    if(t.dataset.opt!==undefined){optimizeImgs();return;}
+   if(t.dataset.cexp!==undefined){exportCust();return;}
+   if(t.dataset.bulk!==undefined){bulkPrice();return;}
+   if(t.dataset.bk!==undefined){backup();return;}
+   if(t.dataset.rst!==undefined){$("rstf").click();return;}
    if(t.dataset.print){printOrder(t.dataset.print);return;}
   if(t.dataset.pc!==undefined){pcat=t.dataset.pc;$("pchips").innerHTML=pChips();$("plist").innerHTML=prodCards();return;}
   if(t.id==="mdl"||t.dataset.close!==undefined){closeM();return;}
@@ -286,9 +305,9 @@ document.addEventListener("click",async e=>{
   if(t.dataset.rvdel){const [id,i]=t.dataset.rvdel.split(":"),x=P.find(p=>p.id==id);x.rv.splice(+i,1);if(!x.rv.length)delete x.rv;save();render();}
   if(t.id==="cadd"){const c=$("cc").value.trim(),p=Math.round(+$("cp").value);if(!c||!(p>=1&&p<=90)){$("cerr").textContent="اكتب الكود ونسبة من 1 إلى 90.";return;}COUPONS[c]=p;save();render();}
   if(t.id==="rvadd"){const x=P.find(p=>p.id==$("rvp").value),n=$("rvn").value.trim(),c=$("rvt").value.trim();if(!x||!n||!c){$("rerr").textContent="اكتب اسم الزبون ونص التعليق.";return;}(x.rv=x.rv||[]).push({n,s:+$("rvs").value,t:c});save();render();}
-  if(t.id==="aset"){DELIVERY=Math.max(0,+$("sd").value||0);WHATSAPP=$("sw").value.replace(/\D/g,"")||WHATSAPP;save();}
+  if(t.id==="aset"){DELIVERY=Math.max(0,+$("sd").value||0);WHATSAPP=$("sw").value.replace(/\D/g,"")||WHATSAPP;CFG.FREEDEL=Math.max(0,+$("sf").value||0);CFG.MINORD=Math.max(0,+$("sm").value||0);CFG.ANN=$("sa").value.trim().slice(0,120);save();}
   if(t.id==="aseed")save();
-  if(t.id==="aexp"){const bl=new Blob([JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS})],{type:"application/json"}),l=document.createElement("a");l.href=URL.createObjectURL(bl);l.download="store-data.json";l.click();toast("نزل الملف: ارفعه على GitHub");}
+  if(t.id==="aexp"){const bl=new Blob([JSON.stringify({P,DELIVERY,WHATSAPP,COUPONS,...CFG})],{type:"application/json"}),l=document.createElement("a");l.href=URL.createObjectURL(bl);l.download="store-data.json";l.click();toast("نزل الملف: ارفعه على GitHub");}
   if(t.id==="areset"&&confirm("ترجع لبيانات الملف الأصلي؟")){try{localStorage.removeItem("taj_data");}catch(err){}location.reload();}
   if(t.id==="fsave"){
     const n=$("fn").value.trim(),c=$("fc").value.trim(),p=+$("fp").value;
@@ -304,12 +323,14 @@ document.addEventListener("click",async e=>{
     save();closeM();render();
   }
 });
-document.addEventListener("input",e=>{if(e.target.id==="osq"){osq=e.target.value;$("olist").innerHTML=ordersList();return;}if(e.target.id==="psq"){psq=e.target.value;$("plist").innerHTML=prodCards();}});
+document.addEventListener("input",e=>{if(e.target.id==="csq"){cq=e.target.value;$("clist").innerHTML=custList();return;}if(e.target.id==="osq"){osq=e.target.value;$("olist").innerHTML=ordersList();return;}if(e.target.id==="psq"){psq=e.target.value;$("plist").innerHTML=prodCards();}});
 document.addEventListener("change",async e=>{
   const t=e.target;
   if(t.id==="showp"){$("lp").type=t.checked?"text":"password";return;}
   if(t.id==="fi"&&t.files[0]){pimg=await readImg(t.files[0]);const pv=$("prev");pv.src=pimg;pv.hidden=false;return;}
   if(t.id==="ofil"){ofil=t.value;render();return;}
+   if(t.id==="odr"){odr=t.value;render();return;}
+   if(t.id==="rstf"&&t.files[0]){restoreBk(t.files[0]);t.value="";return;}
   if(t.dataset.ost){setStatus(t.dataset.ost,t.value);render();return;}
   const x=P.find(p=>p.id==(t.dataset.pr||t.dataset.out||t.dataset.avail||t.dataset.stk||t.dataset.hot));if(!x)return;
   if(t.dataset.pr)x.p=Math.max(0,+t.value||0);
